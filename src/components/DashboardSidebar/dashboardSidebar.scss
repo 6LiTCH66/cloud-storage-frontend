@@ -1,0 +1,46 @@
+@import "../../styles/variables";
+
+.dashboard-sidebar{
+  width: 100%;
+  margin-top: 1rem;
+  flex: 1;
+
+  .sidebar-buttons{
+    width: 100%;
+    list-style: none;
+    padding: .5rem;
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+
+    li{
+      button{
+        display: flex;
+        gap: 5px;
+        text-align: left;
+        justify-content: flex-start;
+        align-items: center;
+        cursor: pointer;
+
+        border-radius: 8px;
+        padding: .75rem;
+        background-color: transparent;
+
+        border: none;
+        width: 100%;
+        color: #777;
+        font-size: 16px;
+        font-family: $body-font;
+        font-weight: 500;
+
+        &:hover{
+          background-color: #1890FF;
+          color: $white-color;
+        }
+      }
+
+    }
+  }
+
+
+}
