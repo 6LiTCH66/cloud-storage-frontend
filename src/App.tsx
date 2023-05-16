@@ -9,6 +9,7 @@ import {RootState, useAppDispatch} from "./store/store";
 import {useDispatch, useSelector} from "react-redux";
 import {getUser, setUser} from "./store/userSlice";
 import {UserAuthentication} from "./types/UserAuthentication";
+import {Toaster} from "react-hot-toast";
 
 function App() {
 
@@ -48,7 +49,11 @@ function App() {
             {/*<Dashboard/>*/}
             <Routes/>
         </BrowserRouter>
+        <Toaster position="top-right" toastOptions={{
 
+            className: 'notification',
+
+        }}/>
     </div>
   );
 }

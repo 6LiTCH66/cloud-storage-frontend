@@ -1,7 +1,9 @@
 import React, {FormEvent, useState} from 'react';
 import "../authentication.scss"
 import {UserAuthentication} from "../../../types/UserAuthentication";
-// import {signup} from "../../../http/userAPI";
+import {registration} from "../../../http/userAPI";
+import toast from "react-hot-toast";
+import {deleteFiles} from "../../../store/filesSlice";
 // import toast from 'react-hot-toast';
 
 function Signup() {
@@ -12,6 +14,21 @@ function Signup() {
     const handleSingupForm = async (event: FormEvent) => {
         event.preventDefault()
 
+        toast.promise(
+            registration(userCredentials).then(() =>{
+
+            }),
+            {
+                loading: 'Signing up...',
+                success: "Congratulations! Your sign-up was successful. Welcome to our community!",
+                error: "Sorry, we couldn't sign you up at this time. Please check that all fields are filled out correctly and try again.",
+            },
+            {
+                position: 'top-center',
+            }
+        );
+
+        setUserCredentials({email: "", password: ""})
 
 
     }

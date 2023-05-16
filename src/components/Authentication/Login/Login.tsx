@@ -12,6 +12,7 @@ import {RootState, useAppDispatch} from "../../../store/store";
 import {userLogin} from "../../../store/userSlice";
 import {useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
+import toast from "react-hot-toast";
 
 function Login() {
     const [userCredentials, setUserCredentials] = useState<UserAuthentication>({email: "", password: ""})
@@ -27,7 +28,18 @@ function Login() {
     const handleUserForm = async (event: FormEvent) => {
         event.preventDefault()
 
-        dispatch(userLogin(userCredentials))
+
+        toast.promise(
+            dispatch(userLogin(userCredentials)),
+            {
+                loading: 'Signing in...',
+                success: "Congratulations! You have successfully signed in to your account.",
+                error: "Sorry, we were unable to sign you in. Please check your username and password and try again.",
+            },
+            {
+                position: 'top-center',
+            }
+        );
 
     }
 

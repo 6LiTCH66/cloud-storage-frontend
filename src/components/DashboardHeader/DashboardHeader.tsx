@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useEffect, useRef} from 'react';
 import "./dashboardHeader.scss"
 import {AiOutlineCloudUpload} from "react-icons/ai";
 import AWS from "aws-sdk"
@@ -13,6 +13,9 @@ import {addFiles, deleteFiles, setFileId, setFileProgress} from "../../store/fil
 import {useSelector} from "react-redux";
 import {useDispatch} from "react-redux";
 import {Button} from "@mui/material";
+import s3 from "../../utils/aws_s3"
+import toast from "react-hot-toast";
+import {userLogin} from "../../store/userSlice";
 
 function DashboardHeader() {
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -29,15 +32,6 @@ function DashboardHeader() {
     const dispatch = useAppDispatch()
     const defaultDispatch = useDispatch()
 
-    AWS.config.update({
-        region: 'eu-north-1',
-        credentials: {
-            accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID || "",
-            secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACCESS_KEY || "",
-        },
-    });
-
-    const s3 = new AWS.S3();
 
     const checkFileType = (file: File): string => {
         if (file.type.startsWith('image/')){
@@ -59,32 +53,47 @@ function DashboardHeader() {
             Body: file,
         };
 
-        s3.upload(params)
-            .on('httpUploadProgress', (progress) => {
-                defaultDispatch(setFileProgress(Math.round((progress.loaded / progress.total) * 100)));
-                // console.log('Upload progress:', Math.round((progress.loaded / progress.total) * 100) + '%');
-            })
-            .send((err: Error, data: AWS.S3.ManagedUpload.SendData) => {
-                if (err) {
-                    console.log(err);
-                    return;
-                }
-                const fileType = checkFileType(file);
+        toast.promise(
+            new Promise<void>((resolve, reject) => {
+                s3.upload(params)
+                    .on('httpUploadProgress', (progress) => {
+                        defaultDispatch(setFileProgress(Math.round((progress.loaded / progress.total) * 100)));
+                        // console.log('Upload progress:', Math.round((progress.loaded / progress.total) * 100) + '%');
+                    })
+                    .send((err: Error, data: AWS.S3.ManagedUpload.SendData) => {
+                        if (err) {
+                            console.log(err);
+                            reject(err);
+                            return;
+                        }
 
-                const fileUpload: Files = {
-                    file_name: file.name,
-                    file_type: fileType,
-                    file_location: data.Location,
-                    aws_file_name: fileName,
-                    size: file.size,
-                }
+                        const fileType = checkFileType(file);
 
-                dispatch(addFiles(fileUpload))
-                defaultDispatch(setFileProgress(null))
+                        const fileUpload: Files = {
+                            file_name: file.name,
+                            file_type: fileType,
+                            file_location: data.Location,
+                            aws_file_name: fileName,
+                            size: file.size,
+                        }
+
+                        dispatch(addFiles(fileUpload))
+                        defaultDispatch(setFileProgress(null))
+                        resolve();
 
 
-                console.log('File uploaded successfully');
-            });
+                    });
+            }),
+            {
+                loading: 'Uploading file...',
+                success: 'File uploaded successfully',
+                error: 'File upload failed',
+            },
+            {
+                position: 'top-center',
+            }
+        );
+
     };
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -100,8 +109,19 @@ function DashboardHeader() {
     const handleDeleteFile = () => {
 
         if (file_id){
+            toast.promise(
+                dispatch(deleteFiles(file_id)),
+                {
+                    loading: 'Deleting file...',
+                    success: "Congratulations! You have successfully deleted file",
+                    error: "Sorry, something went wrong while deleting file!",
+                },
+                {
+                    position: 'top-center',
+                }
+            );
 
-            dispatch(deleteFiles(file_id))
+
             defaultDispatch(setFileId([]))
 
         }else{
@@ -123,7 +143,7 @@ function DashboardHeader() {
                     <span>Upload a file</span>
                 </button>
 
-                <button type="button" className="upload-file-btn delete-btn" style={{color: file_id.length <= 0 ? "#fff": "blue"}} disabled={file_id.length <= 0} onClick={handleDeleteFile}>
+                <button type="button" className="upload-file-btn delete-btn" style={{color: file_id.length >= 0 ? "#fff": "blue"}} disabled={file_id.length <= 0} onClick={handleDeleteFile}>
                     <span>Delete</span>
                 </button>
 

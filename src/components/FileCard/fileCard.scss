@@ -1,5 +1,7 @@
 @import "../../styles/variables";
 
+
+
 .selected{
   outline: #40A9FF solid 3px;
   //background-color: red;
@@ -22,6 +24,8 @@
   &:not(.selected):hover{
     outline: #C0C0C0 solid 2px;
   }
+
+
 
 
   .file-image_container{

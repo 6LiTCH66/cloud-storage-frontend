@@ -1,0 +1,29 @@
+@import "../../../styles/variables";
+.dropdown-menu{
+  width: 200px;
+  position: fixed;
+  background-color: #FFF;
+  padding: .5rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  border-radius: .5rem;
+  z-index: 999;
+
+  .dropdown-menu_links{
+    display: flex;
+    flex-direction: column;
+    a{
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: .5rem;
+      color: #707070;
+      font-family: $body-font;
+
+      &:hover{
+        background-color: #f2f2f2;
+        border-radius: 4px;
+      }
+    }
+  }
+
+}

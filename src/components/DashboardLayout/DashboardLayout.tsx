@@ -13,6 +13,7 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import {getUser} from "../../store/userSlice";
 import {useNavigate} from "react-router-dom";
+import {setOpenDropdownId} from "../../store/dropDownSlice";
 
 function LinearProgressWithLabel(props: LinearProgressProps & { value: number }) {
     return (
@@ -98,7 +99,7 @@ function DashboardLayout() {
 
 
                 {files.length ? (
-                        <div className="dashboard-layout_wrapper" ref={containerRef}>
+                        <div className="dashboard-layout_wrapper" ref={containerRef} onClick={() => dispatch(setOpenDropdownId(null))}>
                             {files?.map((file, index) => (
                                 <FileCard file={file} key={index}/>
                             ))}

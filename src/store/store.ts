@@ -2,11 +2,13 @@ import {configureStore} from "@reduxjs/toolkit";
 import {useDispatch} from "react-redux";
 import filesReducer from "./filesSlice"
 import userReducer from "./userSlice"
+import dropdownReducer from "./dropDownSlice"
 
 const store = configureStore({
     reducer: {
         filesSlice: filesReducer,
-        userSlice: userReducer
+        userSlice: userReducer,
+        dropDownSlice: dropdownReducer
     },
 });
 
