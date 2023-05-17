@@ -12,7 +12,7 @@ import LinearProgress, { LinearProgressProps } from '@mui/material/LinearProgres
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import {getUser} from "../../store/userSlice";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {setOpenDropdownId} from "../../store/dropDownSlice";
 
 function LinearProgressWithLabel(props: LinearProgressProps & { value: number }) {
@@ -34,6 +34,7 @@ function DashboardLayout() {
 
     const [fileIds, setFileIds] = useState<string[]>([]);
     const navigate = useNavigate();
+    const params = useParams()
 
     const dispatch = useAppDispatch()
 
@@ -44,6 +45,7 @@ function DashboardLayout() {
     const { isAuth } = useSelector(
         (state: RootState) => state.userSlice
     );
+
 
 
 
@@ -66,9 +68,11 @@ function DashboardLayout() {
 
 
     useEffect(() => {
-        dispatch(fetchFiles())
 
-    }, [dispatch]);
+        dispatch(fetchFiles(params.file_type))
+
+    }, [dispatch, params]);
+
     const containerRef = useRef<HTMLDivElement>(null);
 
     const onFileSelect = (id: string, type: "select"| "unselect") =>{
@@ -79,7 +83,6 @@ function DashboardLayout() {
             setFileIds(prevState => prevState.filter((_id) => _id !== id))
         }
     }
-
 
 
 
@@ -143,6 +146,7 @@ function DashboardLayout() {
                         <p>Your cloud storage is empty!</p>
                     </div>
                 )}
+
 
 
 

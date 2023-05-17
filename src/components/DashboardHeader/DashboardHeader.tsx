@@ -16,9 +16,12 @@ import {Button} from "@mui/material";
 import s3 from "../../utils/aws_s3"
 import toast from "react-hot-toast";
 import {userLogin} from "../../store/userSlice";
+import {useNavigate} from "react-router-dom";
 
 function DashboardHeader() {
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const navigate = useNavigate()
     const { file_id } = useSelector(
         (state: RootState) => state.filesSlice
     );
@@ -80,6 +83,8 @@ function DashboardHeader() {
                         dispatch(addFiles(fileUpload))
                         defaultDispatch(setFileProgress(null))
                         resolve();
+                        navigate("/dashboard")
+
 
 
                     });
@@ -93,6 +98,8 @@ function DashboardHeader() {
                 position: 'top-center',
             }
         );
+
+
 
     };
 
@@ -132,8 +139,6 @@ function DashboardHeader() {
     }
 
 
-
-
     return (
         <div className="dashboard-header">
             <div className="file_upload">
@@ -143,7 +148,7 @@ function DashboardHeader() {
                     <span>Upload a file</span>
                 </button>
 
-                <button type="button" className="upload-file-btn delete-btn" style={{color: file_id.length >= 0 ? "#fff": "blue"}} disabled={file_id.length <= 0} onClick={handleDeleteFile}>
+                <button type="button" className="upload-file-btn delete-btn" style={{backgroundColor: file_id.length <= 0 ? "#EABDBC" : ""}} disabled={file_id.length <= 0} onClick={handleDeleteFile}>
                     <span>Delete</span>
                 </button>
 

@@ -49,11 +49,6 @@ function Navbar() {
                             <Link to="/dashboard">Dashboard</Link>
                         </li>
 
-                        <li onClick={() => setToggle(false)}>
-                            <Link to="#">Profile</Link>
-                        </li>
-
-
                     </ul>
 
                     <div>

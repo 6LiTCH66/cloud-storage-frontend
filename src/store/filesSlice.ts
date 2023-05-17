@@ -20,8 +20,8 @@ const FilesStateDefault: FilesSlice = {
     file_id: [],
     file_progress: null
 }
-export const fetchFiles = createAsyncThunk('filesSlice/fetchFiles', async () => {
-    return await getFiles();
+export const fetchFiles = createAsyncThunk('filesSlice/fetchFiles', async (file_type: string | undefined) => {
+    return await getFiles(file_type);
 });
 
 export const deleteFiles = createAsyncThunk('favouriteSlice/deleteReduxFavourites', async (file_ids: string[]) => {
