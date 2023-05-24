@@ -40,9 +40,7 @@ function DashboardSidebar() {
         setSpace(Math.round(files_size / (1024 * 1024) * Math.pow(10, 2)) / Math.pow(10, 2))
     }, [files]);
 
-    useEffect(() => {
-        console.log(convertMBtoGBPercentage(space))
-    }, [space]);
+
 
 
 
