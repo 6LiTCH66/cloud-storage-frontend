@@ -22,6 +22,8 @@
     "aws-sdk": "^2.1375.0",
     "axios": "^1.4.0",
     "dotenv": "^16.0.3",
+    "flowbite": "^1.6.5",
+    "flowbite-react": "^0.4.4",
     "lodash": "^4.17.21",
     "mongoose": "^7.1.1",
     "node-sass": "^8.0.0",
@@ -62,5 +64,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.3.2"
   }
 }

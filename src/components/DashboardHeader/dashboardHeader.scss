@@ -1,5 +1,63 @@
 @import "../../styles/variables";
 
+.uploader_container{
+  position: relative;
+  //padding: 8px 0;
+
+  .upload-button{
+    display: flex;
+    align-items: center;
+    height: 46px;
+    gap: 8px;
+    cursor: pointer;
+
+    span{
+      font-family: $body-font;
+      font-size: 16px;
+      color: $text-color;
+    }
+
+  }
+
+  &:hover .uploader_dropdown{
+    display: block;
+  }
+
+  .uploader_dropdown{
+    position: absolute;
+    display: none;
+
+
+
+    width: 200px;
+    background-color: #FFF;
+    padding: .5rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    border-radius: .5rem;
+    z-index: 999;
+
+    .dropdown-menu_links_uploader{
+      display: flex;
+      flex-direction: column;
+      a{
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: .5rem;
+        color: #707070;
+        font-family: $body-font;
+        cursor: pointer;
+
+        &:hover{
+          background-color: #f2f2f2;
+          border-radius: 4px;
+        }
+      }
+    }
+  }
+}
+
+
 
 
 .dashboard-header{
