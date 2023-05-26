@@ -9,7 +9,8 @@ import {Sidebar} from "flowbite-react";
 import Box from '@mui/material/Box';
 import LinearProgress, { linearProgressClasses }  from '@mui/material/LinearProgress';
 import {useSelector} from "react-redux";
-import {RootState} from "../../store/store";
+import {RootState, useAppDispatch} from "../../store/store";
+import {userLogout} from "../../store/userSlice";
 
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
     height: 7,
@@ -25,6 +26,7 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 function DashboardSidebar() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const sidebarRef = useRef<HTMLDivElement>(null);
+    const dispatch = useAppDispatch()
 
     function convertMBtoGBPercentage(mb: number) {
         const gb = mb / 1024;
@@ -43,6 +45,16 @@ function DashboardSidebar() {
         // console.log(files_size / (1024 * 1024 * 1024))
         setSpace(Math.round(files_size / (1024 * 1024) * Math.pow(10, 2)) / Math.pow(10, 2))
     }, [files]);
+
+
+
+    const handleLogout = (event: React.MouseEvent<HTMLAnchorElement>) => {
+        event.preventDefault();
+        dispatch(userLogout())
+        localStorage.removeItem("user")
+        navigate("/auth")
+
+    }
 
 
 
@@ -109,7 +121,7 @@ function DashboardSidebar() {
 
                     <ul className="space-y-2 font-medium">
                         <li>
-                            <a href="#"
+                            <Link to="/dashboard"
                                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
                                 <svg aria-hidden="true"
                                      className="w-8 h-8 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
@@ -118,7 +130,7 @@ function DashboardSidebar() {
                                     <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
                                 </svg>
                                 <span className="ml-3">Dashboard</span>
-                            </a>
+                            </Link>
                         </li>
 
 
@@ -134,7 +146,7 @@ function DashboardSidebar() {
                         </li>
 
                         <li>
-                            <a href="#"
+                            <Link to="/dashboard/file"
                                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
 
 
@@ -143,11 +155,11 @@ function DashboardSidebar() {
                                 </svg>
 
                                 <span className="flex-1 ml-3 whitespace-nowrap">Files</span>
-                            </a>
+                            </Link>
                         </li>
 
                         <li>
-                            <a href="#"
+                            <Link to="/dashboard/image"
                                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
 
                                 <svg fill="currentColor"
@@ -160,11 +172,12 @@ function DashboardSidebar() {
                                 </svg>
 
                                 <span className="flex-1 ml-3 whitespace-nowrap">Photos</span>
-                            </a>
+                            </Link>
                         </li>
 
                         <li>
                             <a href="#"
+                               onClick={handleLogout}
                                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
 
                                 <svg fill="none" className="flex-shrink-0 w-8 h-8 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">

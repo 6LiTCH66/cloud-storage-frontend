@@ -29,10 +29,10 @@ function Authentication() {
         }
     }
     return (
-        <div className="authentication" onClick={handleClickOutsideModal}>
+        <div className="authentication " onClick={handleClickOutsideModal}>
 
 
-            <div className="modal-container" ref={modalRef}>
+            <div className="modal-container rounded-lg shadow dark:bg-gray-800 dark:border-gray-700" ref={modalRef}>
 
 
                 <h2 className="auth-title">Welcome to Cloud Storage</h2>
