@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {ChangeEvent, useEffect, useRef, useState} from 'react';
 import "./dashboardHeader.scss"
 import {AiOutlineCloudUpload} from "react-icons/ai";
 import AWS from "aws-sdk"
@@ -22,20 +22,35 @@ import {MdOutlineDownloadForOffline, MdOutlineKeyboardArrowDown, MdOutlineUpload
 import {IoIosArrowDown} from "react-icons/io"
 import {RiDeleteBin6Line} from "react-icons/ri";
 import {ImFolderUpload} from "react-icons/im"
+import {Folder} from "../../types/Folder";
+import {upload_folder} from "../../http/folderAPI";
+import {cloneDeep} from "lodash";
 
 function DashboardHeader() {
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const folderInputRef = useRef<HTMLInputElement>(null);
+    const locationRef = useRef({location: ''});
+
 
     const navigate = useNavigate()
     const { file_id } = useSelector(
         (state: RootState) => state.filesSlice
     );
 
-    const handleButtonClick = () => {
+    const handleFileInputClick = () => {
         if (fileInputRef.current) {
+
             fileInputRef.current.click();
         }
     };
+
+
+    const handleFolderInputClick = () => {
+        if (folderInputRef.current) {
+            folderInputRef.current.click();
+        }
+    };
+
 
     const dispatch = useAppDispatch()
     const defaultDispatch = useDispatch()
@@ -49,11 +64,17 @@ function DashboardHeader() {
         }
     };
 
+    const makeFilename = (file_name: string) => {
+        const uniqueId = uuidv4();
+        return `${uniqueId}_${file_name}`;
+    }
+
 
 
     const uploadFile = (file: File) => {
-        const uniqueId = uuidv4();
-        const fileName = `${uniqueId}_${file.name}`;
+        // const uniqueId = uuidv4();
+
+        const fileName = makeFilename(file.name)
 
         const params: AWS.S3.PutObjectRequest = {
             Bucket: 'cloud-storage-bucket-ilja',
@@ -63,10 +84,10 @@ function DashboardHeader() {
 
         toast.promise(
             new Promise<void>((resolve, reject) => {
+
                 s3.upload(params)
                     .on('httpUploadProgress', (progress) => {
                         defaultDispatch(setFileProgress(Math.round((progress.loaded / progress.total) * 100)));
-                        // console.log('Upload progress:', Math.round((progress.loaded / progress.total) * 100) + '%');
                     })
                     .send((err: Error, data: AWS.S3.ManagedUpload.SendData) => {
                         if (err) {
@@ -89,8 +110,6 @@ function DashboardHeader() {
                         defaultDispatch(setFileProgress(null))
                         resolve();
                         navigate("/dashboard")
-
-
 
                     });
             }),
@@ -117,6 +136,122 @@ function DashboardHeader() {
             event.target.value = ""
         }
     };
+    const [folders, setFolders] = useState<Folder[]>([]);
+    const [location, setLocation] = useState<string>("");
+
+    const processFiles = async (files: FileList | null) => {
+        if (!files) return;
+        let testFolder: Folder[];
+
+        const folders: Folder[] = Array.from(files).reduce((acc: Folder[], file) => {
+
+
+            const pathParts = file.webkitRelativePath.split('/');
+
+            // Extract the file name part of the path
+            const fileName = pathParts.pop();
+            const aws_file_name = makeFilename(file.name);
+
+            const params: AWS.S3.PutObjectRequest = {
+                Bucket: 'cloud-storage-bucket-ilja',
+                Key: file.webkitRelativePath.replace(file.name, aws_file_name),
+                Body: file,
+            };
+
+            let currentFolderLevel = acc;
+            let currentFolder: Folder | undefined;
+
+            pathParts.forEach((folderName) => {
+                let existingFolder = currentFolderLevel.find((folder) => folder.folder_name === folderName);
+
+                if (!existingFolder) {
+                    existingFolder = {
+                        folder_name: folderName,
+                        files: [],
+                        folders: [],
+                    };
+
+                    currentFolderLevel.push(existingFolder);
+                }
+
+                currentFolder = existingFolder;
+                currentFolderLevel = existingFolder.folders;
+            });
+
+            let newFile: Files = {
+                aws_file_name: aws_file_name,
+                file_location: "",
+                file_name: fileName || '',
+                file_type: checkFileType(file),
+                size: file.size
+
+            };
+
+
+
+
+            s3.upload(params)
+                .on('httpUploadProgress', (progress) => {
+                    // console.log(Math.round((progress.loaded / progress.total) * 100))
+                })
+                .send((err: Error, data: AWS.S3.ManagedUpload.SendData) => {
+                    if (err) {
+                        console.log(err);
+                        return;
+                    }
+
+                });
+
+            const file_url_params = {
+                Bucket: 'cloud-storage-bucket-ilja',
+                Key: file.webkitRelativePath.replace(file.name, aws_file_name),
+                Expires: null
+            };
+
+            const objectUrl = s3.getSignedUrl('getObject', file_url_params);
+
+            newFile.file_location = objectUrl
+
+
+            if (currentFolder && currentFolder.files) {
+                currentFolder.files.push(newFile);
+            }
+
+            return acc;
+        }, []);
+
+
+        // setFolders(folders)
+        return folders;
+    }
+
+
+    const handleFolderChange = async (event: ChangeEvent<HTMLInputElement>) => {
+        const { files } = event.target;
+
+
+        if (!files) return;
+        const processedFolders: Folder[] | undefined = await processFiles(files);
+
+        if (processedFolders){
+            // setFolders(processedFolders)
+            await upload_folder(processedFolders[0])
+
+        }
+
+    };
+
+    // useEffect( () => {
+    //     if (folders.length > 0){
+    //
+    //         console.log(folders[0])
+    //
+    //     }
+    // }, [folders]);
+
+
+
+
 
     const handleDeleteFile = () => {
 
@@ -146,7 +281,17 @@ function DashboardHeader() {
 
     return (
         <nav className="flexmb-4 px-5 py-3 mb-3 text-gray-700 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700" aria-label="Breadcrumb">
-            <input type="file" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileChange}/>
+            <input
+
+                type="file" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileChange}/>
+
+            <input
+                /* @ts-expect-error */
+                directory=""
+                webkitdirectory=""
+
+                type="file" ref={folderInputRef} style={{ display: 'none' }} onChange={handleFolderChange}/>
+
             <ol className="flex justify-between items-center space-x-1 md:space-x-3">
 
                 <li className="inline-flex items-center">
@@ -159,12 +304,12 @@ function DashboardHeader() {
 
                         <div className="uploader_dropdown">
                             <div className="dropdown-menu_links_uploader">
-                                <a onClick={() => console.log("click")}>
+                                <a onClick={handleFolderInputClick}>
                                     <MdOutlineDriveFolderUpload size={23}/>
                                     <span>Upload folder</span>
                                 </a>
 
-                                <a onClick={handleButtonClick}>
+                                <a onClick={handleFileInputClick}>
                                     <MdOutlineUploadFile size={23}/>
                                     <span>Upload file</span>
                                 </a>

@@ -3,6 +3,7 @@ import {AiOutlineFileText} from "react-icons/ai"
 import {BsFileEarmark, BsFileEarmarkTextFill} from "react-icons/bs"
 import "./fileCard.scss"
 import {Files, Oid} from "../../types/Files"
+import {FcFile} from "react-icons/fc";
 import {useDispatch, useSelector} from "react-redux";
 
 import DropDownMenu from "./DropDownMenu/DropDownMenu";
@@ -14,7 +15,7 @@ export interface FileCardProps{
 
 
 
-const TextComponent:FC<{text: string}> = ({text}) => {
+export const TextComponent:FC<{text: string}> = ({text}) => {
     const MAX_LENGTH = 21;
     if (text.length <= MAX_LENGTH) {
         return <span>{text}</span>;
@@ -69,7 +70,7 @@ const FileCard:FC<FileCardProps> = ({file: {file_name, file_location, file_type,
                             <img className="image" src={file_location} alt="File"/>
 
                         ): (
-                            <BsFileEarmarkTextFill size={130} color={"#d2d3d8"}/>
+                            <FcFile size={130} color={"#d2d3d8"}/>
 
                         )}
 

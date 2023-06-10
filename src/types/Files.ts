@@ -1,5 +1,4 @@
 
-
 export type Oid = {
     $oid: string
 }

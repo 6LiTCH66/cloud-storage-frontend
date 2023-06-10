@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {FileCard, DashboardSidebar} from "../index";
+import {FileCard, DashboardSidebar, FolderCard} from "../index";
 import "./dashboardLayout.scss"
 import {Files} from "../../types/Files"
 import {getFiles} from "../../http/filesAPI";
@@ -47,9 +47,6 @@ function DashboardLayout() {
     const { isAuth } = useSelector(
         (state: RootState) => state.userSlice
     );
-
-
-
 
 
 
@@ -124,6 +121,7 @@ function DashboardLayout() {
                             {sortedFiles?.map((file, index) => (
                                 <FileCard file={file} key={index}/>
                             ))}
+                            <FolderCard/>
 
 
                             <Selecto
