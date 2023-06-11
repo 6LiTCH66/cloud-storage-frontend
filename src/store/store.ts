@@ -3,12 +3,16 @@ import {useDispatch} from "react-redux";
 import filesReducer from "./filesSlice"
 import userReducer from "./userSlice"
 import dropdownReducer from "./dropDownSlice"
+import dashboardReducer from "./dashboardSlice"
+import folderReducer from "./folderSlice"
 
 const store = configureStore({
     reducer: {
         filesSlice: filesReducer,
         userSlice: userReducer,
-        dropDownSlice: dropdownReducer
+        dropDownSlice: dropdownReducer,
+        dashboardSlice: dashboardReducer,
+        folderSlice: folderReducer
     },
 });
 

@@ -5,9 +5,11 @@ import {Authentication} from "../components";
 
 export default () => (
     <Routes>
-        <Route path="/dashboard" element={<Dashboard/>}>
-            <Route path=":file_type" element={<Dashboard/>}/>
-        </Route>
+        <Route path="/dashboard" element={<Dashboard/>}/>
+
+        <Route path="/files" element={<Dashboard/>}/>
+        <Route path="/folders" element={<Dashboard/>}/>
+
 
         <Route path="/auth" element={<Authentication/>}/>
         <Route path="*" element={<Authentication/>}/>

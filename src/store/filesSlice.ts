@@ -4,7 +4,6 @@ import {Files} from "../types/Files"
 import {RootState} from "./store";
 
 
-
 interface FilesSlice{
     files: Files[];
     status: 'idle' | 'loading' | 'succeeded' | 'failed',

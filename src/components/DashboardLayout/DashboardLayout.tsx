@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {FC, ReactNode, useEffect, useRef, useState} from 'react';
 import {FileCard, DashboardSidebar, FolderCard} from "../index";
 import "./dashboardLayout.scss"
 import {Files} from "../../types/Files"
@@ -14,6 +14,8 @@ import Box from '@mui/material/Box';
 import {getUser, userLogout} from "../../store/userSlice";
 import {useNavigate, useParams} from "react-router-dom";
 import {setOpenDropdownId} from "../../store/dropDownSlice";
+import {dashboard} from "../../http/folderAPI";
+import {FileOrFolder} from "../../types/Folder";
 
 function LinearProgressWithLabel(props: LinearProgressProps & { value: number }) {
     return (
@@ -30,26 +32,20 @@ function LinearProgressWithLabel(props: LinearProgressProps & { value: number })
     );
 }
 
-function DashboardLayout() {
+export interface DashboardLayoutProps{
+    children: ReactNode
+}
 
+const DashboardLayout:FC<DashboardLayoutProps> = ({children}) => {
     const [fileIds, setFileIds] = useState<string[]>([]);
-    const [sortedFiles, setSortedFiles] = useState<Files[]>()
 
     const navigate = useNavigate();
-    const params = useParams()
 
     const dispatch = useAppDispatch()
-
-    const { files, status, isLoading, file_progress } = useSelector(
-        (state: RootState) => state.filesSlice
-    );
 
     const { isAuth } = useSelector(
         (state: RootState) => state.userSlice
     );
-
-
-
 
     useEffect(() => {
         dispatch(setFileId(fileIds))
@@ -57,8 +53,6 @@ function DashboardLayout() {
     }, [fileIds]);
 
     useEffect(() => {
-
-
 
         dispatch(getUser())
 
@@ -68,29 +62,6 @@ function DashboardLayout() {
 
     }, []);
 
-
-
-    useEffect(() => {
-
-        dispatch(fetchFiles(undefined))
-
-
-    }, [dispatch, params]);
-
-
-
-    useEffect(() => {
-
-        if (params.hasOwnProperty("file_type")){
-            const filteredFiles = files.filter(file => file.file_type === params.file_type)
-            setSortedFiles(filteredFiles)
-
-        }else{
-            setSortedFiles(files)
-        }
-
-
-    }, [params, files])
 
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -104,136 +75,52 @@ function DashboardLayout() {
     }
 
 
-
     return (
-        <div>
-            <DashboardSidebar/>
+        <div className="p-4 sm:ml-64 h-screen flex flex-col">
+            <DashboardHeader/>
+
+            <div className="flexmb-4 text-gray-700 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
 
 
+                <div className="dashboard-layout_wrapper" ref={containerRef} onClick={() => dispatch(setOpenDropdownId(null))}>
 
-            <div className="p-4 sm:ml-64 h-screen flex flex-col">
-                <DashboardHeader/>
+                    {children}
 
-                <div className="flexmb-4 text-gray-700 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
+                    <Selecto
+                        container={containerRef.current}
+                        selectableTargets={[".file-card", ".folder-card"]}
+                        selectByClick={true}
+                        selectFromInside={true}
+                        hitRate={10}
+                        toggleContinueSelect={"shift"}
+                        continueSelect={false}
+                        onSelect={e => {
+                            e.added.forEach(el => {
+                                el.classList.add("selected");
 
-                    {files.length ? (
-                        <div className="dashboard-layout_wrapper" ref={containerRef} onClick={() => dispatch(setOpenDropdownId(null))}>
-                            {sortedFiles?.map((file, index) => (
-                                <FileCard file={file} key={index}/>
-                            ))}
-                            <FolderCard/>
+                                if (el.dataset["id"]){
+                                    onFileSelect(el.dataset["id"], "select")
 
+                                }
 
-                            <Selecto
-                                container={containerRef.current}
-                                selectableTargets={[".file-card"]}
-                                selectByClick={true}
-                                selectFromInside={true}
-                                hitRate={10}
-                                toggleContinueSelect={"shift"}
-                                continueSelect={false}
-                                onSelect={e => {
-                                    e.added.forEach(el => {
-                                        el.classList.add("selected");
+                            });
+                            e.removed.forEach(el => {
+                                el.classList.remove("selected");
+                                if (el.dataset["id"]){
+                                    onFileSelect(el.dataset["id"], "unselect")
 
-                                        if (el.dataset["id"]){
-                                            onFileSelect(el.dataset["id"], "select")
+                                }
+                            });
+                        }}
 
-
-                                        }
-
-                                    });
-                                    e.removed.forEach(el => {
-                                        el.classList.remove("selected");
-                                        if (el.dataset["id"]){
-                                            onFileSelect(el.dataset["id"], "unselect")
-
-                                        }
-                                    });
-                                }}
-
-                            />
-
-                        </div>
-
-
-                    ):(
-                        <div className="dashboard-layout_empty">
-                            <p>Your cloud storage is empty!</p>
-                        </div>
-                    )}
+                    />
 
                 </div>
 
 
-
             </div>
+
         </div>
-        // <div className="dashboard-layout">
-        //
-        //     <DashboardHeader/>
-        //     {file_progress ? (
-        //         <LinearProgressWithLabel value={file_progress}/>
-        //
-        //     ):(
-        //         <></>
-        //     )}
-        //
-        //     <div className="dashboard-layout_files">
-        //         <DashboardSidebar/>
-        //
-        //
-        //             {files.length ? (
-        //                     <div className="dashboard-layout_wrapper" ref={containerRef} onClick={() => dispatch(setOpenDropdownId(null))}>
-        //                         {files?.map((file, index) => (
-        //                             <FileCard file={file} key={index}/>
-        //                         ))}
-        //
-        //
-        //                         <Selecto
-        //                             container={containerRef.current}
-        //                             selectableTargets={[".file-card"]}
-        //                             selectByClick={true}
-        //                             selectFromInside={true}
-        //                             hitRate={10}
-        //                             toggleContinueSelect={"shift"}
-        //                             continueSelect={false}
-        //                             onSelect={e => {
-        //                                 e.added.forEach(el => {
-        //                                     el.classList.add("selected");
-        //
-        //                                     if (el.dataset["id"]){
-        //                                         onFileSelect(el.dataset["id"], "select")
-        //
-        //
-        //                                     }
-        //
-        //                                 });
-        //                                 e.removed.forEach(el => {
-        //                                     el.classList.remove("selected");
-        //                                     if (el.dataset["id"]){
-        //                                         onFileSelect(el.dataset["id"], "unselect")
-        //
-        //                                     }
-        //                                 });
-        //                             }}
-        //
-        //                         />
-        //
-        //                     </div>
-        //
-        //
-        //             ):(
-        //                 <div className="dashboard-layout_empty">
-        //                     <p>Your cloud storage is empty!</p>
-        //                 </div>
-        //             )}
-        //
-        //
-        //     </div>
-        //
-        //
-        // </div>
     );
 }
 

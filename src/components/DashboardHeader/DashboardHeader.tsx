@@ -10,26 +10,21 @@ import { v4 as uuidv4 } from 'uuid';
 
 import {RootState, useAppDispatch} from "../../store/store";
 import {addFiles, deleteFiles, setFileId, setFileProgress} from "../../store/filesSlice";
+import {addFolder} from "../../store/folderSlice";
+
 import {useSelector} from "react-redux";
 import {useDispatch} from "react-redux";
-import {Button} from "@mui/material";
 import s3 from "../../utils/aws_s3"
 import toast from "react-hot-toast";
 import {userLogin} from "../../store/userSlice";
 import {useNavigate} from "react-router-dom";
-import {GrUploadOption} from "react-icons/gr";
-import {MdOutlineDownloadForOffline, MdOutlineKeyboardArrowDown, MdOutlineUploadFile, MdOutlineDriveFolderUpload} from "react-icons/md"
-import {IoIosArrowDown} from "react-icons/io"
-import {RiDeleteBin6Line} from "react-icons/ri";
-import {ImFolderUpload} from "react-icons/im"
-import {Folder} from "../../types/Folder";
-import {upload_folder} from "../../http/folderAPI";
-import {cloneDeep} from "lodash";
+import {GrUploadOption, GrAddCircle} from "react-icons/gr";
+import { MdOutlineKeyboardArrowDown, MdOutlineUploadFile, MdOutlineDriveFolderUpload} from "react-icons/md"
+import {FolderJSON} from "../../types/FolderJSON";
 
 function DashboardHeader() {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const folderInputRef = useRef<HTMLInputElement>(null);
-    const locationRef = useRef({location: ''});
 
 
     const navigate = useNavigate()
@@ -69,10 +64,7 @@ function DashboardHeader() {
         return `${uniqueId}_${file_name}`;
     }
 
-
-
     const uploadFile = (file: File) => {
-        // const uniqueId = uuidv4();
 
         const fileName = makeFilename(file.name)
 
@@ -109,7 +101,8 @@ function DashboardHeader() {
                         dispatch(addFiles(fileUpload))
                         defaultDispatch(setFileProgress(null))
                         resolve();
-                        navigate("/dashboard")
+
+                        navigate("/files")
 
                     });
             }),
@@ -136,14 +129,10 @@ function DashboardHeader() {
             event.target.value = ""
         }
     };
-    const [folders, setFolders] = useState<Folder[]>([]);
-    const [location, setLocation] = useState<string>("");
-
     const processFiles = async (files: FileList | null) => {
         if (!files) return;
-        let testFolder: Folder[];
 
-        const folders: Folder[] = Array.from(files).reduce((acc: Folder[], file) => {
+        const folders: FolderJSON[] = Array.from(files).reduce((acc: FolderJSON[], file) => {
 
 
             const pathParts = file.webkitRelativePath.split('/');
@@ -159,7 +148,7 @@ function DashboardHeader() {
             };
 
             let currentFolderLevel = acc;
-            let currentFolder: Folder | undefined;
+            let currentFolder: FolderJSON | undefined;
 
             pathParts.forEach((folderName) => {
                 let existingFolder = currentFolderLevel.find((folder) => folder.folder_name === folderName);
@@ -188,8 +177,6 @@ function DashboardHeader() {
             };
 
 
-
-
             s3.upload(params)
                 .on('httpUploadProgress', (progress) => {
                     // console.log(Math.round((progress.loaded / progress.total) * 100))
@@ -208,7 +195,14 @@ function DashboardHeader() {
                 Expires: null
             };
 
-            const objectUrl = s3.getSignedUrl('getObject', file_url_params);
+            let objectUrl = s3.getSignedUrl('getObject', file_url_params);
+
+            let endPos = objectUrl.indexOf(encodeURIComponent(aws_file_name));
+
+            if (endPos != -1) {
+                objectUrl = objectUrl.substring(0, endPos + encodeURIComponent(aws_file_name).length);
+            }
+
 
             newFile.file_location = objectUrl
 
@@ -220,8 +214,6 @@ function DashboardHeader() {
             return acc;
         }, []);
 
-
-        // setFolders(folders)
         return folders;
     }
 
@@ -231,25 +223,15 @@ function DashboardHeader() {
 
 
         if (!files) return;
-        const processedFolders: Folder[] | undefined = await processFiles(files);
+        const processedFolders: FolderJSON[] | undefined = await processFiles(files);
 
         if (processedFolders){
-            // setFolders(processedFolders)
-            await upload_folder(processedFolders[0])
+            dispatch(addFolder(processedFolders[0]))
+
 
         }
 
     };
-
-    // useEffect( () => {
-    //     if (folders.length > 0){
-    //
-    //         console.log(folders[0])
-    //
-    //     }
-    // }, [folders]);
-
-
 
 
 
@@ -295,12 +277,23 @@ function DashboardHeader() {
             <ol className="flex justify-between items-center space-x-1 md:space-x-3">
 
                 <li className="inline-flex items-center">
+
+                    <div className="create-folder">
+                        <GrAddCircle size={24}/>
+                        <span>Create a folder</span>
+                    </div>
+
                     <div className="uploader_container">
+
                         <div className="upload-button">
                             <GrUploadOption size={24}/>
                             <span>Upload...</span>
                             <MdOutlineKeyboardArrowDown size={20}/>
                         </div>
+
+
+
+
 
                         <div className="uploader_dropdown">
                             <div className="dropdown-menu_links_uploader">
@@ -316,6 +309,7 @@ function DashboardHeader() {
 
                             </div>
                         </div>
+
                     </div>
 
 

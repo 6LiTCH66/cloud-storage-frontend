@@ -1,8 +1,26 @@
 @import "../../styles/variables";
 
+.create-folder{
+  display: flex;
+  align-items: center;
+  height: 46px;
+  gap: 8px;
+  cursor: pointer;
+  margin-right: 1.5rem;
+
+  span{
+    font-family: $body-font;
+    font-size: 16px;
+    color: $text-color;
+  }
+
+}
+
 .uploader_container{
   position: relative;
+  display: flex;
   //padding: 8px 0;
+
 
   .upload-button{
     display: flex;
@@ -19,6 +37,8 @@
 
   }
 
+
+
   &:hover .uploader_dropdown{
     display: block;
   }
@@ -26,8 +46,7 @@
   .uploader_dropdown{
     position: absolute;
     display: none;
-
-
+    top: 100%;
 
     width: 200px;
     background-color: #FFF;
@@ -39,6 +58,7 @@
     .dropdown-menu_links_uploader{
       display: flex;
       flex-direction: column;
+
       a{
         display: flex;
         align-items: center;
