@@ -32,11 +32,11 @@ function LinearProgressWithLabel(props: LinearProgressProps & { value: number })
     );
 }
 
-export interface DashboardLayoutProps{
+export interface DashboardProps{
     children: ReactNode
 }
 
-const DashboardLayout:FC<DashboardLayoutProps> = ({children}) => {
+const DashboardLayout:FC<DashboardProps> = ({children}) => {
     const [fileIds, setFileIds] = useState<string[]>([]);
 
     const navigate = useNavigate();
@@ -76,10 +76,10 @@ const DashboardLayout:FC<DashboardLayoutProps> = ({children}) => {
 
 
     return (
-        <div className="p-4 sm:ml-64 h-screen flex flex-col">
+        <div className="dashboard-layout_main p-4 sm:ml-64 h-screen flex flex-col">
             <DashboardHeader/>
 
-            <div className="flexmb-4 text-gray-700 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
+            <div className="dashboard-layout_container flexmb-4 text-gray-700 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
 
 
                 <div className="dashboard-layout_wrapper" ref={containerRef} onClick={() => dispatch(setOpenDropdownId(null))}>

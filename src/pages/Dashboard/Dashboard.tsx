@@ -1,30 +1,11 @@
-import React, {ReactNode, useEffect} from 'react';
+import React, {FC, ReactNode, useEffect} from 'react';
 import {DashboardLayout, DashboardSidebar} from "../../components";
+import { Outlet } from 'react-router-dom';
 import "./dashboard.scss"
-import {useLocation, useNavigate} from "react-router-dom";
-import DashboardList from "../../components/Lists/DashboardList";
-import FilesList from "../../components/Lists/FilesList";
-import FoldersList from "../../components/Lists/FoldersList";
 
-function Dashboard() {
-    const location = useLocation();
-    const history = useNavigate();
+import {DashboardProps} from "../../components/DashboardLayout/DashboardLayout";
 
-
-    const checkPathName = (): ReactNode | null => {
-        switch (location.pathname){
-            case "/dashboard":
-                return <DashboardList/>
-            case "/files":
-                return <FilesList/>
-            case "/folders":
-                return <FoldersList/>
-            default:
-                history("/dashboard")
-                return null
-        }
-    }
-
+const Dashboard = () => {
 
     return (
 
@@ -32,7 +13,9 @@ function Dashboard() {
 
             <DashboardSidebar/>
 
-            <DashboardLayout children={checkPathName()}/>
+            <DashboardLayout>
+                <Outlet/>
+            </DashboardLayout>
 
         </div>
     );

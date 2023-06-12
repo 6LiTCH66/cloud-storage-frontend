@@ -12,7 +12,7 @@ const DashboardStateDefault: DashboardSlice = {
     status: "idle",
 }
 export const fetchDashboard = createAsyncThunk('dashboardSlice/fetchDashboard', async () => {
-    return await dashboard();
+    return await dashboard(undefined);
 });
 
 

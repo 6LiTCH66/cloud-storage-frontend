@@ -20,9 +20,6 @@ function FoldersList() {
 
     }, [dispatch]);
 
-    useEffect(() => {
-        console.log(folders)
-    }, [folders]);
 
 
     return (

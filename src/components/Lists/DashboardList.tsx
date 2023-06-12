@@ -1,19 +1,18 @@
 import React, {useEffect, useState} from 'react';
 import {FileCard, FolderCard} from "../index";
-import {FileOrFolder} from "../../types/Folder";
-import {dashboard} from "../../http/folderAPI";
 import {RootState, useAppDispatch} from "../../store/store";
 import {fetchDashboard} from "../../store/dashboardSlice";
 import {useSelector} from "react-redux";
 
 function DashboardList() {
-    const dispatch = useAppDispatch()
+    const dispatch = useAppDispatch();
 
     const { dashboardList} = useSelector(
         (state: RootState) => state.dashboardSlice
     );
 
     useEffect(() => {
+
         dispatch(fetchDashboard())
 
     }, [dispatch]);
@@ -21,7 +20,7 @@ function DashboardList() {
 
     return (
         <>
-            {dashboardList.length ? (
+            {dashboardList?.length ? (
                 <>
                     {dashboardList?.map((dashboard, index) => {
                         if ("File" in dashboard){

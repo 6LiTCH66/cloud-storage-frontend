@@ -11,6 +11,7 @@ import LinearProgress, { linearProgressClasses }  from '@mui/material/LinearProg
 import {useSelector} from "react-redux";
 import {RootState, useAppDispatch} from "../../store/store";
 import {userLogout} from "../../store/userSlice";
+import {fetchFiles} from "../../store/filesSlice";
 
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
     height: 7,
@@ -39,6 +40,12 @@ function DashboardSidebar() {
     const { files } = useSelector(
         (state: RootState) => state.filesSlice
     );
+
+    useEffect(() => {
+        dispatch(fetchFiles(undefined))
+
+    }, [dispatch]);
+
 
     useEffect(() => {
         let files_size = files.reduce((accumulator, currentValue) => accumulator + currentValue.size, 0);
@@ -150,7 +157,7 @@ function DashboardSidebar() {
                         </li>
 
                         <li>
-                            <Link to="/dashboard/image"
+                            <Link to="/files/image"
                                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
 
                                 <svg fill="currentColor"

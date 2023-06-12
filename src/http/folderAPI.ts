@@ -29,9 +29,19 @@ export const get_folders = async ():Promise<Folder[]> => {
 }
 
 
-export const dashboard = async () => {
+export const dashboard = async (id: string | undefined) => {
+
+    const config: AxiosRequestConfig = {
+        params: {
+            folder_id: id
+        }
+    };
+
     try{
-        const file = await axios.get<FileOrFolder[]>(`${process.env.REACT_APP_BASE_URL}/dashboard`,  {withCredentials: true})
+        const file = await axios.get<FileOrFolder[]>(`${process.env.REACT_APP_BASE_URL}/dashboard`,
+            {withCredentials: true,
+                params: id ? config: ""
+            })
         return file.data
 
     }catch (error){
