@@ -18,7 +18,7 @@ function DashboardList() {
 
     return (
         <>
-            {status === "success" ? (
+            {status === "success" || detailsList?.length ? (
                 <>
                     {detailsList?.length ? (
                         <>
