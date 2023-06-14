@@ -7,6 +7,8 @@ import {Folder} from "../../types/Folder";
 import {useNavigate, useLocation} from "react-router-dom";
 import {fetchDashboard} from "../../store/dashboardSlice";
 import {useAppDispatch} from "../../store/store";
+import { useQueryClient, useQuery } from 'react-query';
+import {dashboard} from "../../http/folderAPI";
 export interface FolderCardProps{
     folder: Folder,
 }
@@ -14,6 +16,7 @@ export interface FolderCardProps{
 const FolderCard:FC<FolderCardProps> = ({folder}) => {
     const navigate = useNavigate();
     const location = useLocation();
+    const queryClient = useQueryClient();
 
     const current_path = location.pathname.split("/")[1];
 
@@ -22,8 +25,18 @@ const FolderCard:FC<FolderCardProps> = ({folder}) => {
     }
 
 
+    const getFolderId = (folder_id: string) => {
+
+        if (!queryClient.getQueryData(['folderDetails', folder_id])) {
+
+            queryClient.prefetchQuery(['folderDetails', folder_id], () => dashboard(folder_id));
+        }
+
+    }
+
+
     return (
-        <div data-id={folder._id?.$oid} className="folder-card" onDoubleClick={openFolder}>
+        <div data-id={folder._id?.$oid} onMouseEnter={() => getFolderId(folder._id?.$oid)} onTouchStart={() => getFolderId(folder._id?.$oid)} className="folder-card" onDoubleClick={openFolder}>
 
             <div className="folder-image_container">
                 <div className="folder-image">
