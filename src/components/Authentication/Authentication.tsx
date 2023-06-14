@@ -28,6 +28,7 @@ function Authentication() {
             // handleCloseModal()
         }
     }
+
     return (
         <div className="authentication " onClick={handleClickOutsideModal}>
 

@@ -1,15 +1,18 @@
 @import "../../styles/variables";
 
 .dashboard-layout_main{
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 24px);
 
   .dashboard-layout_container{
-    height: 100vh;
+    flex-grow: 1;
     overflow: auto;
-
   }
+
   @media screen and (max-width: 768px){
     height: auto;
+
     .dashboard-layout_container{
       height: auto;
     }
@@ -27,6 +30,26 @@
   gap: 2rem;
   height: 100%;
   overflow: auto;
+
+  .empty_folder{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    span{
+      font-family: $headings-font;
+      font-size: 27px;
+    }
+  }
+
+  &:has(.empty_folder){
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+    align-items: center;
+  }
+
+
+
 }
 
 .dashboard-layout{

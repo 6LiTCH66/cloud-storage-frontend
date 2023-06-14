@@ -5,10 +5,10 @@ import {FileOrFolder, Folder} from "../types/Folder";
 
 
 
-export const upload_folder = async (uploadFolder: FolderJSON):Promise<any[]> => {
+export const upload_folder = async (uploadFolder: FolderJSON):Promise<Folder[]> => {
 
     try{
-        const file = await axios.post<any[]>(`${process.env.REACT_APP_BASE_URL}/folder/create`, uploadFolder, {withCredentials: true})
+        const file = await axios.post<Folder[]>(`${process.env.REACT_APP_BASE_URL}/folder/create`, uploadFolder, {withCredentials: true})
         return file.data
 
     }catch (error){

@@ -7,9 +7,7 @@ import { useQueryClient, useQuery } from 'react-query';
 import SkeletonCard from "../SkeletonCard/SkeletonCard";
 
 function FolderDetailsList() {
-
     const params = useParams();
-    // const [detailsList, setDetailsList] = useState<FileOrFolder[]>();
 
     const { data: detailsList, status } = useQuery(['folderDetails', params.folder_id], () => dashboard(params.folder_id));
 

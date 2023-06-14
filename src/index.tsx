@@ -16,7 +16,7 @@ root.render(
   <Provider store={store}>
       <QueryClientProvider client={queryClient}>
           <App />
-      </QueryClientProvider>,
+      </QueryClientProvider>
   </Provider>
 );
 

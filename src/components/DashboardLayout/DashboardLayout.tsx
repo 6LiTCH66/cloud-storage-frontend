@@ -8,29 +8,11 @@ import {RootState, useAppDispatch} from "../../store/store";
 import {fetchFiles, setFileId} from "../../store/filesSlice";
 import {useSelector} from "react-redux";
 import Selecto from "react-selecto";
-import LinearProgress, { LinearProgressProps } from '@mui/material/LinearProgress';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
 import {getUser, userLogout} from "../../store/userSlice";
 import {useNavigate, useParams} from "react-router-dom";
 import {setOpenDropdownId} from "../../store/dropDownSlice";
+import {useQuery} from "react-query";
 import {dashboard} from "../../http/folderAPI";
-import {FileOrFolder} from "../../types/Folder";
-
-function LinearProgressWithLabel(props: LinearProgressProps & { value: number }) {
-    return (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Box sx={{ width: '100%', mr: 1 }}>
-                <LinearProgress variant="determinate" {...props} />
-            </Box>
-            <Box sx={{ minWidth: 35 }}>
-                <Typography variant="body2" color="text.secondary">{`${Math.round(
-                    props.value,
-                )}%`}</Typography>
-            </Box>
-        </Box>
-    );
-}
 
 export interface DashboardProps{
     children: ReactNode
@@ -39,11 +21,15 @@ export interface DashboardProps{
 const DashboardLayout:FC<DashboardProps> = ({children}) => {
     const [fileIds, setFileIds] = useState<string[]>([]);
 
+    const params = useParams();
+
+    const { data: detailsList, status: folder_status } = useQuery(['folderDetails', params.folder_id], () => dashboard(params.folder_id));
+
     const navigate = useNavigate();
 
     const dispatch = useAppDispatch()
 
-    const { isAuth } = useSelector(
+    const { isAuth, status } = useSelector(
         (state: RootState) => state.userSlice
     );
 
@@ -56,11 +42,20 @@ const DashboardLayout:FC<DashboardProps> = ({children}) => {
 
         dispatch(getUser())
 
-        if (!isAuth){
-            navigate("/auth")
-        }
 
     }, []);
+
+
+    useEffect(() => {
+        if (status === "succeeded"){
+            if (!isAuth){
+                navigate("/auth")
+            }
+
+        }
+
+    }, [isAuth]);
+
 
 
     const containerRef = useRef<HTMLDivElement>(null);
@@ -76,11 +71,10 @@ const DashboardLayout:FC<DashboardProps> = ({children}) => {
 
 
     return (
-        <div className="dashboard-layout_main p-4 sm:ml-64 h-screen flex flex-col">
+        <div className="dashboard-layout_main p-4 sm:ml-64 flex flex-col">
             <DashboardHeader/>
 
             <div className="dashboard-layout_container flexmb-4 text-gray-700 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
-
 
                 <div className="dashboard-layout_wrapper" ref={containerRef} onClick={() => dispatch(setOpenDropdownId(null))}>
 

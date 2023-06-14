@@ -5,7 +5,7 @@ import AWS from "aws-sdk"
 import {Simulate} from "react-dom/test-utils";
 import progress = Simulate.progress;
 import {Files} from "../../types/Files";
-import {delete_file} from "../../http/filesAPI";
+import {delete_file, upload_file} from "../../http/filesAPI";
 import { v4 as uuidv4 } from 'uuid';
 
 import {RootState, useAppDispatch} from "../../store/store";
@@ -21,10 +21,15 @@ import {useNavigate} from "react-router-dom";
 import {GrUploadOption, GrAddCircle} from "react-icons/gr";
 import { MdOutlineKeyboardArrowDown, MdOutlineUploadFile, MdOutlineDriveFolderUpload} from "react-icons/md"
 import {FolderJSON} from "../../types/FolderJSON";
+import {useQueryClient, useMutation} from "react-query";
+import {upload_folder} from "../../http/folderAPI";
 
 function DashboardHeader() {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const folderInputRef = useRef<HTMLInputElement>(null);
+
+    const queryClient = useQueryClient()
+
 
 
     const navigate = useNavigate()
@@ -64,6 +69,20 @@ function DashboardHeader() {
         return `${uniqueId}_${file_name}`;
     }
 
+    const mutation = useMutation({
+        mutationFn: upload_file,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['folderDetails'] })
+        },
+    })
+
+    const mutationFolder = useMutation({
+        mutationFn: upload_folder,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['folderDetails'] })
+        },
+    })
+
     const uploadFile = (file: File) => {
 
         const fileName = makeFilename(file.name)
@@ -98,11 +117,10 @@ function DashboardHeader() {
                             size: file.size,
                         }
 
-                        dispatch(addFiles(fileUpload))
+                        mutation.mutate(fileUpload);
+
                         defaultDispatch(setFileProgress(null))
                         resolve();
-
-                        navigate("/files")
 
                     });
             }),
@@ -119,6 +137,8 @@ function DashboardHeader() {
 
 
     };
+
+
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 
@@ -226,7 +246,10 @@ function DashboardHeader() {
         const processedFolders: FolderJSON[] | undefined = await processFiles(files);
 
         if (processedFolders){
-            dispatch(addFolder(processedFolders[0]))
+
+            // dispatch(addFolder(processedFolders[0]))
+
+            mutationFolder.mutate(processedFolders[0]);
 
 
         }

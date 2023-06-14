@@ -29,7 +29,6 @@ function App() {
 
     useEffect(() => {
 
-
         if (status === "succeeded" && Object.keys(currentUser).length !== 0){
 
             localStorage.setItem("user", JSON.stringify(currentUser))

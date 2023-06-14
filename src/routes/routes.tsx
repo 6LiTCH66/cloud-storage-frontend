@@ -18,7 +18,7 @@ export default () => (
                 />
                 <Route
                     path="dashboard/:folder_id"
-                    element={<FolderDetailsList />}
+                    element={<DashboardList />}
                 />
 
                 <Route
@@ -38,7 +38,7 @@ export default () => (
 
                 <Route
                     path="folders/:folder_id"
-                    element={<FolderDetailsList />}
+                    element={<DashboardList />}
                 />
         </Route>
 
