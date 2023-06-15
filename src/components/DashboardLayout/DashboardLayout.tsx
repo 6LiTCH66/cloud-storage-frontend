@@ -23,7 +23,7 @@ const DashboardLayout:FC<DashboardProps> = ({children}) => {
 
     const params = useParams();
 
-    const { data: detailsList, status: folder_status } = useQuery(['folderDetails', params.folder_id], () => dashboard(params.folder_id));
+    // const { data: detailsList, status: folder_status } = useQuery(['folderDetails', params.folder_id], () => dashboard(params.folder_id));
 
     const navigate = useNavigate();
 

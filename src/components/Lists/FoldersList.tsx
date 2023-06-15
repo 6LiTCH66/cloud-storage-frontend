@@ -1,30 +1,16 @@
 import React, {useEffect} from 'react';
-import {useSelector} from "react-redux";
-import {RootState, useAppDispatch} from "../../store/store";
-import {fetchFiles} from "../../store/filesSlice";
-import {getFolder} from "../../store/folderSlice";
 import {FileCard, FolderCard} from "../index";
+
+import {useQuery} from "react-query";
+import {get_folders} from "../../http/folderAPI";
 
 function FoldersList() {
 
-    const dispatch = useAppDispatch()
-
-    const { folders, status} = useSelector(
-        (state: RootState) => state.folderSlice
-    );
-
-    useEffect(() => {
-
-        dispatch(getFolder())
-
-
-    }, [dispatch]);
-
-
+    const { data: foldersList, status: folder_status } = useQuery(['folders'], get_folders);
 
     return (
         <>
-            {folders?.map((folder, index) => (
+            {foldersList?.map((folder, index) => (
                 <FolderCard folder={folder} key={index}/>
             ))}
         </>

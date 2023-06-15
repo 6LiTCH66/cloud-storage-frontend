@@ -1,22 +1,12 @@
 import axios, {AxiosRequestConfig} from "axios"
 import {Files} from "../types/Files";
 
-export const getFiles = async (file_type: string | undefined):Promise<Files[]> => {
+export const getFiles = async ():Promise<Files[]> => {
 
-    const config: AxiosRequestConfig = {
-        params: {
-            file_type: "file"
-        }
-    };
 
     try{
         const files = await axios.get<Files[]>(`${process.env.REACT_APP_BASE_URL}/api/files`,
-            {withCredentials: true,
-                paramsSerializer: (params) => {
-                    return `file_type=${file_type}`;
-                },
-                params: file_type ? config : ""
-            })
+            {withCredentials: true})
         return files.data
 
     }catch (error){

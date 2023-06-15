@@ -31,8 +31,8 @@ function DashboardHeader() {
     const queryClient = useQueryClient()
 
 
-
     const navigate = useNavigate()
+
     const { file_id } = useSelector(
         (state: RootState) => state.filesSlice
     );
@@ -50,7 +50,6 @@ function DashboardHeader() {
             folderInputRef.current.click();
         }
     };
-
 
     const dispatch = useAppDispatch()
     const defaultDispatch = useDispatch()
@@ -73,13 +72,23 @@ function DashboardHeader() {
         mutationFn: upload_file,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['folderDetails'] })
+            queryClient.invalidateQueries({ queryKey: ['files'] })
         },
     })
 
     const mutationFolder = useMutation({
         mutationFn: upload_folder,
         onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['folderDetails',] })
+            queryClient.invalidateQueries({ queryKey: ['folders',] })
+        },
+    })
+
+    const mutationDeleteFile = useMutation({
+        mutationFn: delete_file,
+        onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['folderDetails'] })
+            queryClient.invalidateQueries({ queryKey: ['files'] })
         },
     })
 
@@ -199,7 +208,7 @@ function DashboardHeader() {
 
             s3.upload(params)
                 .on('httpUploadProgress', (progress) => {
-                    // console.log(Math.round((progress.loaded / progress.total) * 100))
+
                 })
                 .send((err: Error, data: AWS.S3.ManagedUpload.SendData) => {
                     if (err) {
@@ -243,13 +252,26 @@ function DashboardHeader() {
 
 
         if (!files) return;
+
+
         const processedFolders: FolderJSON[] | undefined = await processFiles(files);
 
         if (processedFolders){
 
-            // dispatch(addFolder(processedFolders[0]))
 
-            mutationFolder.mutate(processedFolders[0]);
+            toast.promise(
+                mutationFolder.mutateAsync(processedFolders[0]),
+                {
+                    loading: 'Uploading a folder...',
+                    success: "Congratulations! You have successfully upload folder",
+                    error: "Sorry, something went wrong while uploading folder!",
+                },
+                {
+                    position: 'top-center',
+                }
+            );
+
+            ;
 
 
         }
@@ -260,9 +282,10 @@ function DashboardHeader() {
 
     const handleDeleteFile = () => {
 
+
         if (file_id){
             toast.promise(
-                dispatch(deleteFiles(file_id)),
+                mutationDeleteFile.mutateAsync(file_id),
                 {
                     loading: 'Deleting file...',
                     success: "Congratulations! You have successfully deleted file",
@@ -273,12 +296,7 @@ function DashboardHeader() {
                 }
             );
 
-
             defaultDispatch(setFileId([]))
-
-        }else{
-            console.log("no file id")
-
         }
 
     }
@@ -313,9 +331,6 @@ function DashboardHeader() {
                             <span>Upload...</span>
                             <MdOutlineKeyboardArrowDown size={20}/>
                         </div>
-
-
-
 
 
                         <div className="uploader_dropdown">
@@ -355,21 +370,7 @@ function DashboardHeader() {
 
             </ol>
         </nav>
-        // <div className="dashboard-header">
-        //     <div className="file_upload">
-        //
-        //         <button onClick={handleButtonClick} type="button" className="upload-file-btn">
-        //             <AiOutlineCloudUpload size={25} color={"#FFFFFF"}/>
-        //             <span>Upload a file</span>
-        //         </button>
-        //
-        //         <button type="button" className="upload-file-btn delete-btn" style={{backgroundColor: file_id.length <= 0 ? "#EABDBC" : ""}} disabled={file_id.length <= 0} onClick={handleDeleteFile}>
-        //             <span>Delete</span>
-        //         </button>
-        //
-        //         <input type="file" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileChange}/>
-        //     </div>
-        // </div>
+
     );
 }
 

@@ -1,4 +1,4 @@
-import {Route, Routes, useRoutes} from "react-router-dom";
+import {Route, Routes, useRoutes, Navigate} from "react-router-dom";
 import {Dashboard} from "../pages";
 import {Authentication} from "../components";
 import DashboardList from "../components/Lists/DashboardList";
@@ -10,6 +10,8 @@ import FolderDetailsList from "../components/Lists/FolderDetailsList";
 
 export default () => (
     <Routes>
+
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
         <Route path="/" element={<Dashboard/>}>
                 <Route

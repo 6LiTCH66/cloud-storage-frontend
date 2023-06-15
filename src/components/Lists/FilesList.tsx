@@ -5,37 +5,33 @@ import {Files} from "../../types/Files";
 import {useParams} from "react-router-dom";
 import {fetchFiles} from "../../store/filesSlice";
 import {FileCard} from "../index";
+import {useQuery} from "react-query";
+import {get_folders} from "../../http/folderAPI";
+import {getFiles} from "../../http/filesAPI";
 
 
 function FilesList() {
+    const { data: filesList, status: folder_status } = useQuery(['files'], getFiles);
+
     const [sortedFiles, setSortedFiles] = useState<Files[]>();
     const params = useParams()
 
-    const dispatch = useAppDispatch()
-
-    const { files, status, isLoading, file_progress } = useSelector(
-        (state: RootState) => state.filesSlice
-    );
-
-    useEffect(() => {
-
-        dispatch(fetchFiles(undefined))
-
-
-    }, [dispatch, params]);
 
     useEffect(() => {
 
         if (params.hasOwnProperty("file_type")){
-            const filteredFiles = files.filter(file => file.file_type === params.file_type)
-            setSortedFiles(filteredFiles)
+            if (filesList){
+                const filteredFiles = filesList.filter(file => file.file_type === params.file_type)
+                setSortedFiles(filteredFiles)
+            }
+
 
         }else{
-            setSortedFiles(files)
+            setSortedFiles(filesList)
         }
 
 
-    }, [params, files])
+    }, [params, filesList])
 
     return (
         <>
