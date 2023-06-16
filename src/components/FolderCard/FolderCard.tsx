@@ -34,9 +34,11 @@ const FolderCard:FC<FolderCardProps> = ({folder}) => {
 
     }
 
+    // onMouseEnter={() => getFolderId(folder._id?.$oid)} onTouchStart={() => getFolderId(folder._id?.$oid)}
+
 
     return (
-        <div data-id={folder._id?.$oid} onMouseEnter={() => getFolderId(folder._id?.$oid)} onTouchStart={() => getFolderId(folder._id?.$oid)} className="folder-card" onDoubleClick={openFolder}>
+        <div data-id={folder._id?.$oid} className="folder-card" onDoubleClick={openFolder}>
 
             <div className="folder-image_container">
                 <div className="folder-image">

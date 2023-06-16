@@ -3,17 +3,18 @@ import {FileCard, FolderCard} from "../index";
 import {RootState, useAppDispatch} from "../../store/store";
 import {fetchDashboard} from "../../store/dashboardSlice";
 import {useSelector} from "react-redux";
-import {useQuery} from "react-query";
+import {useQuery, useQueryClient} from "react-query";
 import {dashboard} from "../../http/folderAPI";
 import {useParams} from "react-router-dom";
 import SkeletonCard from "../SkeletonCard/SkeletonCard";
 
 import {FcOpenedFolder} from "react-icons/fc"
+import {useFolders} from "../../hooks/useFolders";
 
 function DashboardList() {
     const params = useParams();
 
-    const { data: detailsList, status } = useQuery(['folderDetails', params.folder_id], () => dashboard(params.folder_id));
+    const { data: detailsList, status } = useFolders(params.folder_id)
 
 
     return (

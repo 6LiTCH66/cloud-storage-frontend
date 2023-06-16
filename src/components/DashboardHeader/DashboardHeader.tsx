@@ -79,8 +79,8 @@ function DashboardHeader() {
     const mutationFolder = useMutation({
         mutationFn: upload_folder,
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['folderDetails',] })
-            queryClient.invalidateQueries({ queryKey: ['folders',] })
+            queryClient.invalidateQueries({ queryKey: ['folderDetails'] })
+            queryClient.invalidateQueries({ queryKey: ['folders'] })
         },
     })
 
