@@ -1,4 +1,4 @@
-import React, {FC, useEffect} from 'react';
+import React, {createRef, FC, useContext, useEffect, useRef} from 'react';
 import "./folderCard.scss";
 import {FcFile, FcFolder} from "react-icons/fc";
 import DropDownMenu from "../FileCard/DropDownMenu/DropDownMenu";
@@ -9,11 +9,14 @@ import {fetchDashboard} from "../../store/dashboardSlice";
 import {useAppDispatch} from "../../store/store";
 import { useQueryClient, useQuery } from 'react-query';
 import {dashboard} from "../../http/folderAPI";
+import {setFileId} from "../../store/filesSlice";
+import {useDispatch} from "react-redux";
 export interface FolderCardProps{
     folder: Folder,
 }
 
 const FolderCard:FC<FolderCardProps> = ({folder}) => {
+
     const navigate = useNavigate();
     const location = useLocation();
     const queryClient = useQueryClient();
@@ -22,6 +25,7 @@ const FolderCard:FC<FolderCardProps> = ({folder}) => {
 
     const openFolder = () => {
         navigate(`/${current_path}/${folder._id.$oid}`)
+
     }
 
 
@@ -34,11 +38,9 @@ const FolderCard:FC<FolderCardProps> = ({folder}) => {
 
     }
 
-    // onMouseEnter={() => getFolderId(folder._id?.$oid)} onTouchStart={() => getFolderId(folder._id?.$oid)}
-
 
     return (
-        <div data-id={folder._id?.$oid} className="folder-card" onDoubleClick={openFolder}>
+        <div data-id={folder._id?.$oid} data-tag={"folder"} onMouseEnter={() => getFolderId(folder._id?.$oid)} onTouchStart={() => getFolderId(folder._id?.$oid)} className="folder-card" onDoubleClick={openFolder}>
 
             <div className="folder-image_container">
                 <div className="folder-image">

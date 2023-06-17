@@ -1,4 +1,4 @@
-import React, {ChangeEvent, useEffect, useRef, useState} from 'react';
+import React, {ChangeEvent, useContext, useEffect, useRef, useState} from 'react';
 import "./dashboardHeader.scss"
 import {AiOutlineCloudUpload} from "react-icons/ai";
 import AWS from "aws-sdk"
@@ -36,6 +36,8 @@ function DashboardHeader() {
     const { file_id } = useSelector(
         (state: RootState) => state.filesSlice
     );
+
+
 
     const handleFileInputClick = () => {
         if (fileInputRef.current) {
@@ -158,6 +160,7 @@ function DashboardHeader() {
             event.target.value = ""
         }
     };
+
     const processFiles = async (files: FileList | null) => {
         if (!files) return;
 
@@ -248,6 +251,7 @@ function DashboardHeader() {
 
 
     const handleFolderChange = async (event: ChangeEvent<HTMLInputElement>) => {
+
         const { files } = event.target;
 
 
@@ -271,9 +275,6 @@ function DashboardHeader() {
                 }
             );
 
-            ;
-
-
         }
 
     };
@@ -281,7 +282,6 @@ function DashboardHeader() {
 
 
     const handleDeleteFile = () => {
-
 
         if (file_id){
             toast.promise(
@@ -296,7 +296,6 @@ function DashboardHeader() {
                 }
             );
 
-            defaultDispatch(setFileId([]))
         }
 
     }

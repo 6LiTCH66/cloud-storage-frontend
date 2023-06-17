@@ -1,8 +1,8 @@
-import React, {FC, ReactNode, useEffect, useRef, useState} from 'react';
+import React, {FC, ReactNode, useEffect, useRef, useState, useContext} from 'react';
 import {FileCard, DashboardSidebar, FolderCard} from "../index";
 import "./dashboardLayout.scss"
 import {Files} from "../../types/Files"
-import {getFiles} from "../../http/filesAPI";
+import {delete_file, getFiles} from "../../http/filesAPI";
 import DashboardHeader from "../DashboardHeader/DashboardHeader";
 import {RootState, useAppDispatch} from "../../store/store";
 import {fetchFiles, setFileId} from "../../store/filesSlice";
@@ -11,7 +11,7 @@ import Selecto from "react-selecto";
 import {getUser, userLogout} from "../../store/userSlice";
 import {useNavigate, useParams} from "react-router-dom";
 import {setOpenDropdownId} from "../../store/dropDownSlice";
-import {useQuery} from "react-query";
+import {useMutation, useQuery, useQueryClient} from "react-query";
 import {dashboard} from "../../http/folderAPI";
 
 export interface DashboardProps{
@@ -33,10 +33,8 @@ const DashboardLayout:FC<DashboardProps> = ({children}) => {
         (state: RootState) => state.userSlice
     );
 
-    useEffect(() => {
-        dispatch(setFileId(fileIds))
+    const containerRef = useRef<HTMLDivElement>(null);
 
-    }, [fileIds]);
 
     useEffect(() => {
 
@@ -52,13 +50,32 @@ const DashboardLayout:FC<DashboardProps> = ({children}) => {
                 navigate("/auth")
             }
 
+        }else if (status === "failed"){
+            navigate("/auth")
         }
 
     }, [isAuth]);
 
 
+    useEffect(() => {
 
-    const containerRef = useRef<HTMLDivElement>(null);
+        if (fileIds.length){
+
+            dispatch(setFileId(fileIds))
+
+        }else{
+
+            dispatch(setFileId([]))
+        }
+
+    }, [fileIds]);
+
+
+    useEffect(() => {
+        setFileIds([])
+
+    }, [params])
+
 
     const onFileSelect = (id: string, type: "select"| "unselect") =>{
 
@@ -92,15 +109,18 @@ const DashboardLayout:FC<DashboardProps> = ({children}) => {
                             e.added.forEach(el => {
                                 el.classList.add("selected");
 
-                                if (el.dataset["id"]){
+
+                                if (el.dataset["id"] && el.dataset["tag"] === "file"){
                                     onFileSelect(el.dataset["id"], "select")
 
                                 }
 
+
                             });
                             e.removed.forEach(el => {
                                 el.classList.remove("selected");
-                                if (el.dataset["id"]){
+
+                                if (el.dataset["id"] && el.dataset["tag"] === "file"){
                                     onFileSelect(el.dataset["id"], "unselect")
 
                                 }

@@ -1,9 +1,8 @@
-import React, {FC, ReactNode, useEffect} from 'react';
+import React, {FC, ReactNode, useContext, useEffect} from 'react';
 import {DashboardLayout, DashboardSidebar} from "../../components";
 import { Outlet } from 'react-router-dom';
 import "./dashboard.scss"
 
-import {DashboardProps} from "../../components/DashboardLayout/DashboardLayout";
 
 const Dashboard = () => {
 
@@ -16,6 +15,7 @@ const Dashboard = () => {
             <DashboardLayout>
                 <Outlet/>
             </DashboardLayout>
+
 
         </div>
     );
