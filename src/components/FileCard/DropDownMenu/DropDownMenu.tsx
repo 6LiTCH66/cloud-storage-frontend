@@ -9,6 +9,7 @@ import {setOpenDropdownId} from "../../../store/dropDownSlice";
 import { S3 } from 'aws-sdk';
 import {deleteFiles, setFileId} from "../../../store/filesSlice";
 import toast from "react-hot-toast";
+import {blob} from "stream/consumers";
 
 
 type DropdownMenuProps = {
@@ -29,36 +30,30 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({  x, y, download_link, file_
     );
 
 
-    const generateSignedUrl = async (bucket: string, key: string, filename: string) => {
-        const params: S3.Types.GetObjectRequest = {
-            Bucket: bucket,
-            Key: key,
-            ResponseContentDisposition: `attachment; filename="${filename}"`,
-        };
-
-        try {
-            const signedUrl = await s3.getSignedUrlPromise('getObject', params);
-            return signedUrl;
-        } catch (error) {
-            console.error('Error generating signed URL', error);
-            return null;
-        }
-    };
-
-
-
     const handleClick = async (event: React.MouseEvent<HTMLAnchorElement>) => {
         event.preventDefault()
 
+        fetch(download_link, {
+            mode: "no-cors",
 
-        const signedUrl = await generateSignedUrl("cloud-storage-bucket-ilja", file_name, original_name);
+        }).then(response => response.blob()).then(blob => {
 
-        const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
 
-        if (signedUrl){
-            link.href = signedUrl;
+            const link = document.createElement('a');
+            link.href = url;
+
+            link.download = original_name
+
+            document.body.appendChild(link);
+
             link.click();
-        }
+
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+
+        }).catch(error => console.error('Error:', error));
+
 
     }
 
@@ -80,9 +75,6 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({  x, y, download_link, file_
                 }
             );
             dispatch(setFileId([]))
-
-        }else{
-            console.log("no file id")
 
         }
 

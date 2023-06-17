@@ -59,7 +59,6 @@ const FileCard:FC<FileCardProps> = ({file: {file_name, file_location, file_type,
         }
     }
 
-
     return (
         <>
             <div data-id={_id?.$oid} data-tag={"file"} className="file-card" onContextMenu={handleContextMenu} onDoubleClick={handleDoubleClick}>
