@@ -12,6 +12,8 @@ import {useSelector} from "react-redux";
 import {RootState, useAppDispatch} from "../../store/store";
 import {userLogout} from "../../store/userSlice";
 import {fetchFiles} from "../../store/filesSlice";
+import {useQuery} from "react-query";
+import {getFiles} from "../../http/filesAPI";
 
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
     height: 7,
@@ -25,6 +27,8 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
     },
 }));
 function DashboardSidebar() {
+    const { data: files, status: folder_status } = useQuery(['files'], getFiles);
+
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const sidebarRef = useRef<HTMLDivElement>(null);
     const dispatch = useAppDispatch()
@@ -33,24 +37,16 @@ function DashboardSidebar() {
         const gb = mb / 1024;
         return (gb / 1) * 100;
     }
-
     const navigate = useNavigate()
     const [space, setSpace] = useState<number>(0)
 
-    const { files } = useSelector(
-        (state: RootState) => state.filesSlice
-    );
-
     useEffect(() => {
-        dispatch(fetchFiles(undefined))
 
-    }, [dispatch]);
+        if (files){
+            let files_size = files.reduce((accumulator, currentValue) => accumulator + currentValue.size, 0);
+            setSpace(Math.round(files_size / (1024 * 1024) * Math.pow(10, 2)) / Math.pow(10, 2))
+        }
 
-
-    useEffect(() => {
-        let files_size = files.reduce((accumulator, currentValue) => accumulator + currentValue.size, 0);
-        // console.log(files_size / (1024 * 1024 * 1024))
-        setSpace(Math.round(files_size / (1024 * 1024) * Math.pow(10, 2)) / Math.pow(10, 2))
     }, [files]);
 
 

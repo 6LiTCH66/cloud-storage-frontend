@@ -7,11 +7,13 @@ import {fetchDashboard} from "./dashboardSlice";
 interface FolderSlice {
     folders: Folder[];
     status: 'idle' | 'loading' | 'succeeded' | 'failed',
+    folder_id: string[],
 }
 
 const FolderStateDefault: FolderSlice = {
     folders: [] as Folder[],
     status: "idle",
+    folder_id: []
 }
 
 export const addFolder = createAsyncThunk('folderSlice/addFolder', async (uploadFolder: FolderJSON, thunkAPI) => {
@@ -31,7 +33,11 @@ export const getFolder = createAsyncThunk('folderSlice/getFolder', async () => {
 const folderSlice = createSlice({
     name: "folderSlice",
     initialState: FolderStateDefault,
-    reducers: {},
+    reducers: {
+        setFolderId(state, action: PayloadAction<string[]>){
+            state.folder_id = action.payload
+        },
+    },
 
     extraReducers: (builder) => {
         builder
@@ -59,5 +65,5 @@ const folderSlice = createSlice({
             })
     }
 })
-
+export const { setFolderId } = folderSlice.actions;
 export default folderSlice.reducer

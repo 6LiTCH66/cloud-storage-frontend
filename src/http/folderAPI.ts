@@ -1,9 +1,20 @@
 import axios, {AxiosRequestConfig} from "axios"
 import {FolderJSON} from "../types/FolderJSON";
-import {Files} from "../types/Files";
 import {FileOrFolder, Folder} from "../types/Folder";
 
+export const delete_folder = async (ids: string[]) :Promise<Folder[]> => {
 
+    const queryParams = ids.map(id => `ids=${id}`).join('&');
+
+    try{
+        const file = await axios.delete<Folder[]>(`${process.env.REACT_APP_BASE_URL}/folder/delete?${queryParams}`, {withCredentials: true})
+        return file.data
+
+    }catch (error){
+        console.error(error)
+        throw error
+    }
+}
 
 export const upload_folder = async (uploadFolder: FolderJSON):Promise<Folder[]> => {
 

@@ -1,18 +1,15 @@
 import React, {FC, ReactNode, useEffect, useRef, useState, useContext} from 'react';
 import {FileCard, DashboardSidebar, FolderCard} from "../index";
 import "./dashboardLayout.scss"
-import {Files} from "../../types/Files"
-import {delete_file, getFiles} from "../../http/filesAPI";
 import DashboardHeader from "../DashboardHeader/DashboardHeader";
 import {RootState, useAppDispatch} from "../../store/store";
 import {fetchFiles, setFileId} from "../../store/filesSlice";
+import {setFolderId} from "../../store/folderSlice";
 import {useSelector} from "react-redux";
 import Selecto from "react-selecto";
 import {getUser, userLogout} from "../../store/userSlice";
 import {useNavigate, useParams} from "react-router-dom";
 import {setOpenDropdownId} from "../../store/dropDownSlice";
-import {useMutation, useQuery, useQueryClient} from "react-query";
-import {dashboard} from "../../http/folderAPI";
 
 export interface DashboardProps{
     children: ReactNode
@@ -20,6 +17,7 @@ export interface DashboardProps{
 
 const DashboardLayout:FC<DashboardProps> = ({children}) => {
     const [fileIds, setFileIds] = useState<string[]>([]);
+    const [folderIds, setFolderIds] = useState<string[]>([]);
 
     const params = useParams();
 
@@ -46,6 +44,7 @@ const DashboardLayout:FC<DashboardProps> = ({children}) => {
 
     useEffect(() => {
         if (status === "succeeded"){
+
             if (!isAuth){
                 navigate("/auth")
             }
@@ -70,21 +69,49 @@ const DashboardLayout:FC<DashboardProps> = ({children}) => {
 
     }, [fileIds]);
 
+    useEffect(() => {
+
+        if (folderIds.length){
+
+            dispatch(setFolderId(folderIds))
+
+        }else{
+
+            dispatch(setFolderId([]))
+        }
+
+    }, [folderIds]);
+
+
 
     useEffect(() => {
         setFileIds([])
+        setFolderIds([])
 
     }, [params])
 
 
-    const onFileSelect = (id: string, type: "select"| "unselect") =>{
-
-        if (type === "select"){
-            setFileIds(prevState => [...prevState, id])
-        }else{
-            setFileIds(prevState => prevState.filter((_id) => _id !== id))
+    const onItemSelect = (id: string, type: "select"| "unselect", itemType: "file" | "folder" | string) =>{
+        switch (itemType){
+            case "file":
+                if (type === "select"){
+                    setFileIds(prevState => [...prevState, id])
+                }else{
+                    setFileIds(prevState => prevState.filter((_id) => _id !== id))
+                }
+                break;
+            case "folder":
+                if (type === "select"){
+                    setFolderIds(prevState => [...prevState, id])
+                }else{
+                    setFolderIds(prevState => prevState.filter((_id) => _id !== id))
+                }
+                break;
         }
+
+
     }
+
 
 
     return (
@@ -109,10 +136,8 @@ const DashboardLayout:FC<DashboardProps> = ({children}) => {
                             e.added.forEach(el => {
                                 el.classList.add("selected");
 
-
-                                if (el.dataset["id"] && el.dataset["tag"] === "file"){
-                                    onFileSelect(el.dataset["id"], "select")
-
+                                if (el.dataset["id"] && el.dataset["tag"]){
+                                    onItemSelect(el.dataset["id"], "select", el.dataset["tag"])
                                 }
 
 
@@ -120,10 +145,10 @@ const DashboardLayout:FC<DashboardProps> = ({children}) => {
                             e.removed.forEach(el => {
                                 el.classList.remove("selected");
 
-                                if (el.dataset["id"] && el.dataset["tag"] === "file"){
-                                    onFileSelect(el.dataset["id"], "unselect")
-
+                                if (el.dataset["id"] && el.dataset["tag"]){
+                                    onItemSelect(el.dataset["id"], "unselect", el.dataset["tag"])
                                 }
+
                             });
                         }}
 

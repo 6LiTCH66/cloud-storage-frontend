@@ -22,7 +22,7 @@ import {GrUploadOption, GrAddCircle} from "react-icons/gr";
 import { MdOutlineKeyboardArrowDown, MdOutlineUploadFile, MdOutlineDriveFolderUpload} from "react-icons/md"
 import {FolderJSON} from "../../types/FolderJSON";
 import {useQueryClient, useMutation} from "react-query";
-import {upload_folder} from "../../http/folderAPI";
+import {delete_folder, upload_folder} from "../../http/folderAPI";
 
 function DashboardHeader() {
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -35,6 +35,10 @@ function DashboardHeader() {
 
     const { file_id } = useSelector(
         (state: RootState) => state.filesSlice
+    );
+
+    const { folder_id } = useSelector(
+        (state: RootState) => state.folderSlice
     );
 
 
@@ -91,6 +95,14 @@ function DashboardHeader() {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['folderDetails'] })
             queryClient.invalidateQueries({ queryKey: ['files'] })
+        },
+    })
+
+    const mutationDeleteFolder = useMutation({
+        mutationFn: delete_folder,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['folderDetails'] })
+            queryClient.invalidateQueries({ queryKey: ['folders'] })
         },
     })
 
@@ -280,10 +292,36 @@ function DashboardHeader() {
     };
 
 
-
     const handleDeleteFile = () => {
 
-        if (file_id){
+        if (file_id.length && folder_id.length){
+            toast.promise(
+                Promise.all([mutationDeleteFolder.mutateAsync(folder_id), mutationDeleteFile.mutateAsync(file_id)]),
+                {
+                    loading: 'Deleting folder and file...',
+                    success: "Congratulations! You have successfully deleted folder and file",
+                    error: "Sorry, something went wrong while deleting folder and file!",
+                },
+                {
+                    position: 'top-center',
+                }
+            );
+
+
+
+        }else if (folder_id.length){
+            toast.promise(
+                mutationDeleteFolder.mutateAsync(folder_id),
+                {
+                    loading: 'Deleting folder...',
+                    success: "Congratulations! You have successfully deleted folder",
+                    error: "Sorry, something went wrong while deleting folder!",
+                },
+                {
+                    position: 'top-center',
+                }
+            );
+        }else{
             toast.promise(
                 mutationDeleteFile.mutateAsync(file_id),
                 {
@@ -295,7 +333,6 @@ function DashboardHeader() {
                     position: 'top-center',
                 }
             );
-
         }
 
     }
@@ -353,9 +390,9 @@ function DashboardHeader() {
                 </li>
                 <li className="inline-flex items-center">
 
-                    {file_id.length ? (
+                    {file_id.length || folder_id.length ? (
                         <button type="button"
-                                disabled={file_id.length <= 0} onClick={handleDeleteFile}
+                                disabled={file_id.length <= 0 && folder_id.length <= 0} onClick={handleDeleteFile}
                                 className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm p-2 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
 
                         <svg fill="none" className="w-5 h-5" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
