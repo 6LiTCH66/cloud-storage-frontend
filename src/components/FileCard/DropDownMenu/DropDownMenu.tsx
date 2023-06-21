@@ -10,6 +10,7 @@ import { S3 } from 'aws-sdk';
 import {deleteFiles, setFileId} from "../../../store/filesSlice";
 import toast from "react-hot-toast";
 import {blob} from "stream/consumers";
+import axios from "axios";
 
 
 type DropdownMenuProps = {
@@ -30,29 +31,20 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({  x, y, download_link, file_
     );
 
 
+
     const handleClick = async (event: React.MouseEvent<HTMLAnchorElement>) => {
         event.preventDefault()
 
-        fetch(download_link, {
-            mode: "no-cors",
 
-        }).then(response => response.blob()).then(blob => {
 
-            const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = download_link;
+        link.download = original_name;
 
-            const link = document.createElement('a');
-            link.href = url;
+        document.body.appendChild(link);
+        link.click();
 
-            link.download = original_name
-
-            document.body.appendChild(link);
-
-            link.click();
-
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-
-        }).catch(error => console.error('Error:', error));
+        document.body.removeChild(link);
 
 
     }

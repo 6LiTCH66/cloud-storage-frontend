@@ -27,9 +27,9 @@ export const deleteFiles = createAsyncThunk('favouriteSlice/deleteReduxFavourite
     return await delete_file(file_ids);
 });
 
-export const addFiles = createAsyncThunk('filesSlice/addFiles', async (file: Files) => {
-    return await upload_file(file);
-});
+// export const addFiles = createAsyncThunk('filesSlice/addFiles', async (file: Files) => {
+//     return new Promise()
+// });
 
 const filesSlice = createSlice({
     name: "filesSlice",
@@ -58,16 +58,16 @@ const filesSlice = createSlice({
             })
 
 
-            .addCase(addFiles.pending, (state) => {
-                state.status = 'loading';
-            })
-            .addCase(addFiles.fulfilled, (state, action: PayloadAction<Files[]>) => {
-                state.status = 'succeeded';
-                state.files = action.payload
-            })
-            .addCase(addFiles.rejected, (state, action) => {
-                state.status = 'failed';
-            })
+            // .addCase(addFiles.pending, (state) => {
+            //     state.status = 'loading';
+            // })
+            // .addCase(addFiles.fulfilled, (state, action: PayloadAction<Files[]>) => {
+            //     state.status = 'succeeded';
+            //     state.files = action.payload
+            // })
+            // .addCase(addFiles.rejected, (state, action) => {
+            //     state.status = 'failed';
+            // })
 
 
             .addCase(deleteFiles.pending, (state) => {

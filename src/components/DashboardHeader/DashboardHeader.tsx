@@ -9,15 +9,14 @@ import {delete_file, upload_file} from "../../http/filesAPI";
 import { v4 as uuidv4 } from 'uuid';
 
 import {RootState, useAppDispatch} from "../../store/store";
-import {addFiles, deleteFiles, setFileId, setFileProgress} from "../../store/filesSlice";
-import {addFolder} from "../../store/folderSlice";
+import {deleteFiles, setFileId, setFileProgress} from "../../store/filesSlice";
 
 import {useSelector} from "react-redux";
 import {useDispatch} from "react-redux";
 import s3 from "../../utils/aws_s3"
 import toast from "react-hot-toast";
 import {userLogin} from "../../store/userSlice";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {GrUploadOption, GrAddCircle} from "react-icons/gr";
 import { MdOutlineKeyboardArrowDown, MdOutlineUploadFile, MdOutlineDriveFolderUpload} from "react-icons/md"
 import {FolderJSON} from "../../types/FolderJSON";
@@ -29,6 +28,8 @@ function DashboardHeader() {
     const folderInputRef = useRef<HTMLInputElement>(null);
 
     const queryClient = useQueryClient()
+
+    const urlParams = useParams();
 
 
     const navigate = useNavigate()
@@ -73,6 +74,11 @@ function DashboardHeader() {
         const uniqueId = uuidv4();
         return `${uniqueId}_${file_name}`;
     }
+
+    type FileUpload = {
+        file: Files;
+        folder_id: string | undefined;
+    };
 
     const mutation = useMutation({
         mutationFn: upload_file,
@@ -140,7 +146,7 @@ function DashboardHeader() {
                             size: file.size,
                         }
 
-                        mutation.mutate(fileUpload);
+                        mutation.mutate({ uploadFile: fileUpload, folder_id: urlParams.folder_id });
 
                         defaultDispatch(setFileProgress(null))
                         resolve();
@@ -181,7 +187,6 @@ function DashboardHeader() {
 
             const pathParts = file.webkitRelativePath.split('/');
 
-            // Extract the file name part of the path
             const fileName = pathParts.pop();
             const aws_file_name = makeFilename(file.name);
 
@@ -225,6 +230,7 @@ function DashboardHeader() {
                 .on('httpUploadProgress', (progress) => {
 
                 })
+
                 .send((err: Error, data: AWS.S3.ManagedUpload.SendData) => {
                     if (err) {
                         console.log(err);
@@ -232,6 +238,7 @@ function DashboardHeader() {
                     }
 
                 });
+
 
             const file_url_params = {
                 Bucket: 'cloud-storage-bucket-ilja',
@@ -276,7 +283,7 @@ function DashboardHeader() {
 
 
             toast.promise(
-                mutationFolder.mutateAsync(processedFolders[0]),
+                mutationFolder.mutateAsync({ uploadFolder: processedFolders[0], folder_id: urlParams.folder_id }),
                 {
                     loading: 'Uploading a folder...',
                     success: "Congratulations! You have successfully upload folder",
