@@ -22,6 +22,7 @@ import { MdOutlineKeyboardArrowDown, MdOutlineUploadFile, MdOutlineDriveFolderUp
 import {FolderJSON} from "../../types/FolderJSON";
 import {useQueryClient, useMutation} from "react-query";
 import {delete_folder, upload_folder} from "../../http/folderAPI";
+import {setFolderId} from "../../store/folderSlice";
 
 function DashboardHeader() {
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -74,11 +75,6 @@ function DashboardHeader() {
         const uniqueId = uuidv4();
         return `${uniqueId}_${file_name}`;
     }
-
-    type FileUpload = {
-        file: Files;
-        folder_id: string | undefined;
-    };
 
     const mutation = useMutation({
         mutationFn: upload_file,
@@ -317,6 +313,7 @@ function DashboardHeader() {
 
 
         }else if (folder_id.length){
+
             toast.promise(
                 mutationDeleteFolder.mutateAsync(folder_id),
                 {
@@ -328,7 +325,10 @@ function DashboardHeader() {
                     position: 'top-center',
                 }
             );
+
         }else{
+
+
             toast.promise(
                 mutationDeleteFile.mutateAsync(file_id),
                 {
@@ -341,6 +341,8 @@ function DashboardHeader() {
                 }
             );
         }
+        dispatch(setFileId([]))
+        dispatch(setFolderId([]))
 
     }
 

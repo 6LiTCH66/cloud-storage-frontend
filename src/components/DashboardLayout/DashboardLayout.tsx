@@ -1,5 +1,4 @@
 import React, {FC, ReactNode, useEffect, useRef, useState, useContext} from 'react';
-import {FileCard, DashboardSidebar, FolderCard} from "../index";
 import "./dashboardLayout.scss"
 import DashboardHeader from "../DashboardHeader/DashboardHeader";
 import {RootState, useAppDispatch} from "../../store/store";
@@ -10,7 +9,6 @@ import Selecto from "react-selecto";
 import {getUser, userLogout} from "../../store/userSlice";
 import {useNavigate, useParams} from "react-router-dom";
 import {setOpenDropdownId} from "../../store/dropDownSlice";
-
 export interface DashboardProps{
     children: ReactNode
 }
@@ -31,7 +29,16 @@ const DashboardLayout:FC<DashboardProps> = ({children}) => {
         (state: RootState) => state.userSlice
     );
 
+    const { file_id } = useSelector(
+        (state: RootState) => state.filesSlice
+    );
+
+    const { folder_id } = useSelector(
+        (state: RootState) => state.folderSlice
+    );
+
     const containerRef = useRef<HTMLDivElement>(null);
+    const selectoRef = useRef<Selecto>(null);
 
 
     useEffect(() => {
@@ -69,6 +76,7 @@ const DashboardLayout:FC<DashboardProps> = ({children}) => {
 
     }, [fileIds]);
 
+
     useEffect(() => {
 
         if (folderIds.length){
@@ -91,20 +99,27 @@ const DashboardLayout:FC<DashboardProps> = ({children}) => {
     }, [params])
 
 
+
+
     const onItemSelect = (id: string, type: "select"| "unselect", itemType: "file" | "folder" | string) =>{
         switch (itemType){
             case "file":
                 if (type === "select"){
                     setFileIds(prevState => [...prevState, id])
                 }else{
-                    setFileIds(prevState => prevState.filter((_id) => _id !== id))
+                    if (file_id.length){
+                        setFileIds(prevState => prevState.filter((_id) => _id !== id))
+
+                    }
                 }
                 break;
             case "folder":
                 if (type === "select"){
                     setFolderIds(prevState => [...prevState, id])
                 }else{
-                    setFolderIds(prevState => prevState.filter((_id) => _id !== id))
+                    if (folder_id.length){
+                        setFolderIds(prevState => prevState.filter((_id) => _id !== id))
+                    }
                 }
                 break;
         }
@@ -125,6 +140,7 @@ const DashboardLayout:FC<DashboardProps> = ({children}) => {
                     {children}
 
                     <Selecto
+                        ref={selectoRef}
                         container={containerRef.current}
                         selectableTargets={[".file-card", ".folder-card"]}
                         selectByClick={true}

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {FC, useEffect, useMemo, useState} from 'react';
 import {FileCard, FolderCard} from "../index";
 import {RootState, useAppDispatch} from "../../store/store";
 import {fetchDashboard} from "../../store/dashboardSlice";
@@ -11,10 +11,30 @@ import SkeletonCard from "../SkeletonCard/SkeletonCard";
 import {FcOpenedFolder} from "react-icons/fc"
 import {useFolders} from "../../hooks/useFolders";
 import {setFileId} from "../../store/filesSlice";
+import {FileOrFolder} from "../../types/Folder";
 
-function DashboardList() {
+
+interface DashboardDetailsProps {
+    detailsList: FileOrFolder[];
+}
+
+const DashboardDetails:FC<DashboardDetailsProps> = React.memo(({ detailsList }) => {
+
+    return (
+        <>
+            {detailsList?.map((dashboard, index) => {
+                if ("File" in dashboard){
+                    return <FileCard file={dashboard.File} key={dashboard.File._id?.$oid}/>
+                }else if ("Folder" in dashboard){
+                    return <FolderCard folder={dashboard.Folder} key={dashboard.Folder._id?.$oid}/>
+                }
+            })}
+        </>
+    )
+});
+
+const DashboardList = () => {
     const params = useParams();
-    const defaultDispatch = useDispatch()
     const { data: detailsList, status } = useFolders(params.folder_id)
 
 
@@ -23,15 +43,8 @@ function DashboardList() {
             {status === "success" || detailsList?.length ? (
                 <>
                     {detailsList?.length ? (
-                        <>
-                            {detailsList?.map((dashboard, index) => {
-                                if ("File" in dashboard){
-                                    return <FileCard file={dashboard.File} key={index}/>
-                                }else if ("Folder" in dashboard){
-                                    return <FolderCard folder={dashboard.Folder} key={index}/>
-                                }
-                            })}
-                        </>
+                        <DashboardDetails detailsList={detailsList}/>
+
                     ):(
                         <div className="empty_folder">
                             <FcOpenedFolder size={200}/>

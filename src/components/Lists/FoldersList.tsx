@@ -21,7 +21,7 @@ function FoldersList() {
     return (
         <>
             {foldersList?.map((folder, index) => (
-                <FolderCard folder={folder} key={index}/>
+                <FolderCard folder={folder} key={folder._id.$oid}/>
             ))}
         </>
     );

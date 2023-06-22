@@ -39,6 +39,7 @@ const FolderCard:FC<FolderCardProps> = ({folder}) => {
     }
 
 
+
     return (
         <div data-id={folder._id?.$oid} data-tag={"folder"} onMouseEnter={() => getFolderId(folder._id?.$oid)} onTouchStart={() => getFolderId(folder._id?.$oid)} className="folder-card" onDoubleClick={openFolder}>
 
@@ -61,4 +62,4 @@ const FolderCard:FC<FolderCardProps> = ({folder}) => {
     );
 }
 
-export default FolderCard;
+export default  React.memo(FolderCard);

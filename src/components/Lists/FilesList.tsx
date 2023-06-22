@@ -36,7 +36,7 @@ function FilesList() {
     return (
         <>
             {sortedFiles?.map((file, index) => (
-                <FileCard file={file} key={index}/>
+                <FileCard file={file} key={file._id?.$oid}/>
             ))}
         </>
     );

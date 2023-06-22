@@ -42,7 +42,6 @@ const FileCard:FC<FileCardProps> = ({file: {file_name, file_location, file_type,
     const dispatch = useDispatch();
 
 
-
     const handleContextMenu = (event: React.MouseEvent) => {
         event.preventDefault();
         dispatch(setOpenDropdownId(_id?.$oid))
@@ -100,4 +99,4 @@ const FileCard:FC<FileCardProps> = ({file: {file_name, file_location, file_type,
     );
 }
 
-export default FileCard;
+export default  React.memo(FileCard);
