@@ -22,17 +22,14 @@ This project offers a simple and interactive interface for handling files and fo
 # Examples of using:
 * ### Login Page
 
-![screencapture-cloud-storage-frontend-murex-vercel-app-auth-2023-06-28-20_42_55.png](..%2F..%2F..%2FDownloads%2Fscreencapture-cloud-storage-frontend-murex-vercel-app-auth-2023-06-28-20_42_55.png)
-
+![screencapture-cloud-storage-frontend-murex-vercel-app-auth-2023-06-28-20_42_55](https://github.com/6LiTCH66/cloud-storage-frontend/assets/62281366/8261d8b0-b9e5-4566-bb17-5c1a3a5b92b3)
 * ### Dashboard Page
 
-![screencapture-cloud-storage-frontend-murex-vercel-app-dashboard-2023-06-28-20_45_11.png](..%2F..%2F..%2FDownloads%2Fscreencapture-cloud-storage-frontend-murex-vercel-app-dashboard-2023-06-28-20_45_11.png)
-
+![screencapture-cloud-storage-frontend-murex-vercel-app-dashboard-2023-06-28-20_45_11](https://github.com/6LiTCH66/cloud-storage-frontend/assets/62281366/38634eb3-db83-4be9-9b95-1583a8db64f6)
 * ### Folders Page
-![screencapture-cloud-storage-frontend-murex-vercel-app-folders-2023-06-28-20_46_27.png](..%2F..%2F..%2FDownloads%2Fscreencapture-cloud-storage-frontend-murex-vercel-app-folders-2023-06-28-20_46_27.png)
+![screencapture-cloud-storage-frontend-murex-vercel-app-folders-2023-06-28-20_46_27](https://github.com/6LiTCH66/cloud-storage-frontend/assets/62281366/111b7306-a714-4d38-a7a0-8c71eef4360f)
 
 * ### Files Page
-![screencapture-cloud-storage-frontend-murex-vercel-app-files-2023-06-28-20_47_15.png](..%2F..%2F..%2FDownloads%2Fscreencapture-cloud-storage-frontend-murex-vercel-app-files-2023-06-28-20_47_15.png)
-
+![screencapture-cloud-storage-frontend-murex-vercel-app-files-2023-06-28-20_47_15](https://github.com/6LiTCH66/cloud-storage-frontend/assets/62281366/411546f9-5ce2-4015-8c72-dc44388a5f77)
 * ### Photos page
-![screencapture-cloud-storage-frontend-murex-vercel-app-files-image-2023-06-28-20_48_24.png](..%2F..%2F..%2FDownloads%2Fscreencapture-cloud-storage-frontend-murex-vercel-app-files-image-2023-06-28-20_48_24.png)
+![screencapture-cloud-storage-frontend-murex-vercel-app-files-image-2023-06-28-20_48_24](https://github.com/6LiTCH66/cloud-storage-frontend/assets/62281366/640963cf-cc24-480b-8f63-4a3dcbbabd2a)
