@@ -11,6 +11,7 @@ import { useQueryClient, useQuery } from 'react-query';
 import {dashboard} from "../../http/folderAPI";
 import {setFileId} from "../../store/filesSlice";
 import {useDispatch} from "react-redux";
+import {setCurrentFolder} from "../../store/folderSlice";
 export interface FolderCardProps{
     folder: Folder,
 }
@@ -20,6 +21,7 @@ const FolderCard:FC<FolderCardProps> = ({folder}) => {
     const navigate = useNavigate();
     const location = useLocation();
     const queryClient = useQueryClient();
+    const dispatch = useAppDispatch()
 
     const current_path = location.pathname.split("/")[1];
 
@@ -37,6 +39,12 @@ const FolderCard:FC<FolderCardProps> = ({folder}) => {
         }
 
     }
+
+    // const getCurrentFolderPath = () => {
+    //     dispatch(setCurrentFolder(folder))
+    // }
+    //
+    //
 
 
 

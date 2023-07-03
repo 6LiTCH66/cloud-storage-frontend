@@ -1,6 +1,6 @@
 import {Oid, Files} from "./Files";
 
-enum FolderType{
+export enum FolderType{
     Folder,
     Subfolder,
 }
@@ -15,6 +15,7 @@ export interface Folder{
     parent_id: Oid | null,
     createdAt: Date,
     updatedAt: Date,
+    path: string
 }
 
 export type FileOrFolder = { File: Files } | { Folder: Folder };

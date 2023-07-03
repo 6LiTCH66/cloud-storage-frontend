@@ -4,14 +4,15 @@ import {RootState, useAppDispatch} from "../../store/store";
 import {fetchDashboard} from "../../store/dashboardSlice";
 import {useDispatch, useSelector} from "react-redux";
 import {useQuery, useQueryClient} from "react-query";
-import {dashboard} from "../../http/folderAPI";
-import {useParams} from "react-router-dom";
+import {dashboard, get_folder_details, get_folders} from "../../http/folderAPI";
+import {useParams, useLocation} from "react-router-dom";
 import SkeletonCard from "../SkeletonCard/SkeletonCard";
 
 import {FcOpenedFolder} from "react-icons/fc"
 import {useFolders} from "../../hooks/useFolders";
 import {setFileId} from "../../store/filesSlice";
-import {FileOrFolder} from "../../types/Folder";
+import {FileOrFolder, Folder} from "../../types/Folder";
+import {setCurrentFolder} from "../../store/folderSlice";
 
 
 interface DashboardDetailsProps {
@@ -33,9 +34,30 @@ const DashboardDetails:FC<DashboardDetailsProps> = React.memo(({ detailsList }) 
     )
 });
 
+
+
 const DashboardList = () => {
+    const dispatch = useAppDispatch()
     const params = useParams();
     const { data: detailsList, status } = useFolders(params.folder_id)
+
+    const { data: currentFolder, status: currentFolderStatus } =
+        useQuery(['currentFolder', params.folder_id], () => get_folder_details(params.folder_id), {enabled: !!params.folder_id});
+
+    useEffect(() => {
+        if (currentFolder){
+
+            // console.log(currentFolder.path)
+            dispatch(setCurrentFolder(currentFolder))
+        }
+
+    }, [currentFolder])
+
+    useEffect(() => {
+        if (!params.folder_id){
+            dispatch(setCurrentFolder({} as Folder))
+        }
+    }, [params])
 
 
     return (

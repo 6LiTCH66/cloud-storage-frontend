@@ -8,26 +8,20 @@ interface FolderSlice {
     folders: Folder[];
     status: 'idle' | 'loading' | 'succeeded' | 'failed',
     folder_id: string[],
+    current_folder: Folder
 }
 
 const FolderStateDefault: FolderSlice = {
     folders: [] as Folder[],
     status: "idle",
-    folder_id: []
+    folder_id: [],
+    current_folder: {} as Folder
 }
-
-// export const addFolder = createAsyncThunk('folderSlice/addFolder', async (uploadFolder: FolderJSON, thunkAPI) => {
-//     const response =  await upload_folder(uploadFolder);
-//
-//     thunkAPI.dispatch(fetchDashboard())
-//     return response;
-// });
 
 export const getFolder = createAsyncThunk('folderSlice/getFolder', async () => {
     return await get_folders();
 
 });
-
 
 
 const folderSlice = createSlice({
@@ -37,21 +31,13 @@ const folderSlice = createSlice({
         setFolderId(state, action: PayloadAction<string[]>){
             state.folder_id = action.payload
         },
+        setCurrentFolder(state, action: PayloadAction<Folder>){
+            state.current_folder = action.payload
+        }
     },
 
     extraReducers: (builder) => {
         builder
-
-            // .addCase(addFolder.pending, (state) => {
-            //     state.status = 'loading';
-            // })
-            // .addCase(addFolder.fulfilled, (state, action: PayloadAction<Folder[]>) => {
-            //     state.status = 'succeeded';
-            //     state.folders = action.payload
-            // })
-            // .addCase(addFolder.rejected, (state, action) => {
-            //     state.status = 'failed';
-            // })
 
             .addCase(getFolder.pending, (state) => {
                 state.status = 'loading';
@@ -65,5 +51,5 @@ const folderSlice = createSlice({
             })
     }
 })
-export const { setFolderId } = folderSlice.actions;
+export const { setFolderId, setCurrentFolder } = folderSlice.actions;
 export default folderSlice.reducer

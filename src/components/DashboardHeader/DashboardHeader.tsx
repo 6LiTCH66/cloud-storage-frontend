@@ -1,33 +1,30 @@
-import React, {ChangeEvent, useContext, useEffect, useRef, useState} from 'react';
+import React, {ChangeEvent, useEffect, useRef, useState} from 'react';
 import "./dashboardHeader.scss"
-import {AiOutlineCloudUpload} from "react-icons/ai";
 import AWS from "aws-sdk"
 import {Simulate} from "react-dom/test-utils";
-import progress = Simulate.progress;
 import {Files} from "../../types/Files";
 import {delete_file, upload_file} from "../../http/filesAPI";
-import { v4 as uuidv4 } from 'uuid';
+import {v4 as uuidv4} from 'uuid';
 
 import {RootState, useAppDispatch} from "../../store/store";
-import {deleteFiles, setFileId, setFileProgress} from "../../store/filesSlice";
+import {setFileId, setFileProgress} from "../../store/filesSlice";
 
-import {useSelector} from "react-redux";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import s3 from "../../utils/aws_s3"
 import toast from "react-hot-toast";
-import {userLogin} from "../../store/userSlice";
 import {useNavigate, useParams} from "react-router-dom";
-import {GrUploadOption, GrAddCircle} from "react-icons/gr";
-import { MdOutlineKeyboardArrowDown, MdOutlineUploadFile, MdOutlineDriveFolderUpload} from "react-icons/md"
+import {GrAddCircle, GrUploadOption} from "react-icons/gr";
+import {MdOutlineDriveFolderUpload, MdOutlineKeyboardArrowDown, MdOutlineUploadFile} from "react-icons/md"
 import {FolderJSON} from "../../types/FolderJSON";
-import {useQueryClient, useMutation} from "react-query";
+import {useMutation, useQueryClient} from "react-query";
 import {delete_folder, upload_folder} from "../../http/folderAPI";
 import {setFolderId} from "../../store/folderSlice";
+import path from 'path';
+import {FolderType} from "../../types/Folder";
 
 function DashboardHeader() {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const folderInputRef = useRef<HTMLInputElement>(null);
-
     const queryClient = useQueryClient()
 
     const urlParams = useParams();
@@ -39,10 +36,9 @@ function DashboardHeader() {
         (state: RootState) => state.filesSlice
     );
 
-    const { folder_id } = useSelector(
+    const { folder_id, current_folder } = useSelector(
         (state: RootState) => state.folderSlice
     );
-
 
 
     const handleFileInputClick = () => {
@@ -114,7 +110,7 @@ function DashboardHeader() {
 
         const params: AWS.S3.PutObjectRequest = {
             Bucket: 'cloud-storage-bucket-ilja',
-            Key: fileName,
+            Key: current_folder.path ? current_folder.path +  fileName : fileName,
             Body: file,
         };
 
@@ -140,6 +136,7 @@ function DashboardHeader() {
                             file_location: data.Location,
                             aws_file_name: fileName,
                             size: file.size,
+                            path: current_folder.path
                         }
 
                         mutation.mutate({ uploadFile: fileUpload, folder_id: urlParams.folder_id });
@@ -160,7 +157,6 @@ function DashboardHeader() {
         );
 
 
-
     };
 
 
@@ -176,19 +172,21 @@ function DashboardHeader() {
     };
 
     const processFiles = async (files: FileList | null) => {
+
         if (!files) return;
 
         const folders: FolderJSON[] = Array.from(files).reduce((acc: FolderJSON[], file) => {
 
-
             const pathParts = file.webkitRelativePath.split('/');
+
 
             const fileName = pathParts.pop();
             const aws_file_name = makeFilename(file.name);
 
+
             const params: AWS.S3.PutObjectRequest = {
                 Bucket: 'cloud-storage-bucket-ilja',
-                Key: file.webkitRelativePath.replace(file.name, aws_file_name),
+                Key: current_folder.path ? current_folder.path + file.webkitRelativePath.replace(file.name, aws_file_name) : file.webkitRelativePath.replace(file.name, aws_file_name),
                 Body: file,
             };
 
@@ -203,6 +201,7 @@ function DashboardHeader() {
                         folder_name: folderName,
                         files: [],
                         folders: [],
+                        path: current_folder.path ? current_folder.path + file.webkitRelativePath.replace(file.name, "") : file.webkitRelativePath.replace(file.name, "")
                     };
 
                     currentFolderLevel.push(existingFolder);
@@ -217,15 +216,13 @@ function DashboardHeader() {
                 file_location: "",
                 file_name: fileName || '',
                 file_type: checkFileType(file),
-                size: file.size
+                size: file.size,
+                path: current_folder.path ? current_folder.path + file.webkitRelativePath.replace(file.name, "") : file.webkitRelativePath.replace(file.name, "")
 
             };
 
 
             s3.upload(params)
-                .on('httpUploadProgress', (progress) => {
-
-                })
 
                 .send((err: Error, data: AWS.S3.ManagedUpload.SendData) => {
                     if (err) {
@@ -235,10 +232,9 @@ function DashboardHeader() {
 
                 });
 
-
             const file_url_params = {
                 Bucket: 'cloud-storage-bucket-ilja',
-                Key: file.webkitRelativePath.replace(file.name, aws_file_name),
+                Key: current_folder.path ? current_folder.path + file.webkitRelativePath.replace(file.name, aws_file_name) : file.webkitRelativePath.replace(file.name, aws_file_name),
                 Expires: null
             };
 
@@ -397,6 +393,19 @@ function DashboardHeader() {
 
 
                 </li>
+
+                <li>
+
+                    <span>
+                        {current_folder && (
+                            <>
+                                {current_folder.path && current_folder.path.slice(0, -1).replaceAll("/", " > ")}
+                            </>
+                        )}
+                    </span>
+
+                </li>
+
                 <li className="inline-flex items-center">
 
                     {file_id.length || folder_id.length ? (

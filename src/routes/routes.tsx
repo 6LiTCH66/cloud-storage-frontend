@@ -9,6 +9,7 @@ import FolderDetailsList from "../components/Lists/FolderDetailsList";
 
 
 export default () => (
+
     <Routes>
 
             <Route path="/" element={<Navigate to="/dashboard" replace />} />

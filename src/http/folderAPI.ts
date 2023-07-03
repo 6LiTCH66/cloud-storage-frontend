@@ -47,6 +47,21 @@ export const get_folders = async ():Promise<Folder[]> => {
     }
 }
 
+export const get_folder_details = async (folder_id: string | undefined):Promise<Folder> => {
+    try{
+        const folders = await axios.get<Folder>(`${process.env.REACT_APP_BASE_URL}/folder/details`,
+            {withCredentials: true,
+                params: {
+                    folder_id: folder_id
+                }})
+        return folders.data
+
+    }catch (error){
+        console.error(error)
+        throw error
+    }
+}
+
 
 export const dashboard = async (id: string | undefined) => {
 

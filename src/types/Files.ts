@@ -9,5 +9,6 @@ export interface Files{
     file_location: string,
     size: number,
     aws_file_name: string,
-    user_id?: string
+    user_id?: string,
+    path?: string
 }
