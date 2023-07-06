@@ -1,36 +1,25 @@
-import React, {useState, useRef, MouseEvent} from 'react';
+import React, {useState, useRef, MouseEvent, useEffect} from 'react';
 import "./authentication.scss"
 import Login from "./Login/Login";
 import Signup from "./Signup/Signup";
-import {IoMdClose} from "react-icons/io"
-// import {toggleModal} from "../../store/modalSlice";
-// import { useDispatch, useSelector } from 'react-redux';
-// import {RootState} from "../../store/store"
+import {useSelector} from "react-redux";
+import {RootState} from "../../store/store";
 
 interface isActive{
     loginBtn: boolean,
     signupBtn: boolean,
 }
 function Authentication() {
-    // const isModalShow = useSelector((state: RootState) => state.modalWindow.showModal)
-    // const dispatch = useDispatch()
-    //
+
     const [isActive, setIsActive] = useState<isActive>({loginBtn: true, signupBtn: false})
 
     const modalRef = useRef<HTMLDivElement>(null);
 
-    const handleCloseModal = () => {
-        // dispatch(toggleModal())
-    }
 
-    const handleClickOutsideModal = (event: MouseEvent) => {
-        if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
-            // handleCloseModal()
-        }
-    }
+
 
     return (
-        <div className="authentication " onClick={handleClickOutsideModal}>
+        <div className="authentication " >
 
 
             <div className="modal-container rounded-lg shadow dark:bg-gray-800 dark:border-gray-700" ref={modalRef}>

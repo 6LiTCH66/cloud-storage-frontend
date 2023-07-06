@@ -37,7 +37,7 @@ const userSlice = createSlice({
     reducers: {
         setUser: (state, action: PayloadAction<UserAuthentication>) =>{
             state.currentUser = action.payload;
-            state.isAuth = localStorage.getItem("user") ? true : false;
+            state.isAuth = !!action.payload;
         },
 
         signout: (state) => {

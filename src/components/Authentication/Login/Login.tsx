@@ -2,28 +2,39 @@ import React, {FormEvent, useEffect, useState} from 'react';
 import "../authentication.scss"
 import {UserAuthentication} from "../../../types/UserAuthentication";
 import {RootState, useAppDispatch} from "../../../store/store";
-import {userLogin} from "../../../store/userSlice";
+import {setUser, userLogin} from "../../../store/userSlice";
 import {useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
 import toast from "react-hot-toast";
+import {useMutation, useQuery, useQueryClient} from "react-query";
+import {get_user, login} from "../../../http/userAPI";
+import {upload_file} from "../../../http/filesAPI";
+import useAuthenticatedUser from "../../../hooks/useAuthenticatedUser";
 
 function Login() {
     const [userCredentials, setUserCredentials] = useState<UserAuthentication>({email: "", password: ""})
-    // const dispatch = useDispatch()
-    const [logging, setLogging] = useState<boolean>(false);
     const navigate = useNavigate();
-    const dispatch = useAppDispatch()
 
-    const { currentUser, status, isAuth } = useSelector(
-        (state: RootState) => state.userSlice
-    );
+    const queryClient = useQueryClient()
+
+    const mutation = useMutation({
+        mutationFn: login,
+        onSuccess: (data) => {
+            queryClient.setQueryData('user', data)
+            navigate("/dashboard")
+        },
+    })
+
+
+    const [logging, setLogging] = useState<boolean>(false);
+
 
     const handleUserForm = async (event: FormEvent) => {
         event.preventDefault()
 
 
         toast.promise(
-            dispatch(userLogin(userCredentials)),
+            mutation.mutateAsync(userCredentials),
             {
                 loading: 'Signing in...',
                 success: "Congratulations! You have successfully signed in to your account.",
@@ -32,21 +43,21 @@ function Login() {
             {
                 position: 'top-center',
             }
-        );
+        )
 
     }
 
 
-    useEffect(() => {
-        if (status === "succeeded" && Object.keys(currentUser).length !== 0){
-            localStorage.setItem("user", JSON.stringify(currentUser))
-            navigate("/dashboard")
-
-        }else if(status === "failed"){
-            localStorage.removeItem("user")
-        }
-
-    }, [status]);
+    // useEffect(() => {
+    //     if (status === "succeeded" && Object.keys(currentUser).length !== 0){
+    //         localStorage.setItem("user", JSON.stringify(currentUser))
+    //         navigate("/dashboard")
+    //
+    //     }else if(status === "failed"){
+    //         localStorage.removeItem("user")
+    //     }
+    //
+    // }, [status]);
 
 
     return (

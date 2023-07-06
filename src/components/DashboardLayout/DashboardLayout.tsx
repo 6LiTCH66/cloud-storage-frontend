@@ -41,26 +41,26 @@ const DashboardLayout:FC<DashboardProps> = ({children}) => {
     const selectoRef = useRef<Selecto>(null);
 
 
-    useEffect(() => {
+    // useEffect(() => {
+    //
+    //     dispatch(getUser())
+    //
+    //
+    // }, []);
 
-        dispatch(getUser())
 
-
-    }, []);
-
-
-    useEffect(() => {
-        if (status === "succeeded"){
-
-            if (!isAuth){
-                navigate("/auth")
-            }
-
-        }else if (status === "failed"){
-            navigate("/auth")
-        }
-
-    }, [isAuth]);
+    // useEffect(() => {
+    //     if (status === "succeeded"){
+    //
+    //         if (!isAuth){
+    //             navigate("/auth")
+    //         }
+    //
+    //     }else if (status === "failed"){
+    //         navigate("/auth")
+    //     }
+    //
+    // }, [isAuth]);
 
 
     useEffect(() => {

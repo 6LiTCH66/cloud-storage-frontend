@@ -16,36 +16,34 @@ function App() {
     const dispatch = useAppDispatch()
     const dispatchApp = useDispatch()
 
-    const { currentUser, status, isAuth } = useSelector(
-        (state: RootState) => state.userSlice
-    );
+    // const { currentUser, status, isAuth } = useSelector(
+    //     (state: RootState) => state.userSlice
+    // );
 
-    useEffect(() => {
-        dispatch(getUser())
+    // useEffect(() => {
+    //     dispatch(getUser())
+    //
+    //
+    // }, [dispatch]);
 
 
-    }, [dispatch]);
-
-
-    useEffect(() => {
-
-        if (status === "succeeded" && Object.keys(currentUser).length !== 0){
-
-            localStorage.setItem("user", JSON.stringify(currentUser))
-        }
-        else if (Object.keys(currentUser).length === 0){
-            localStorage.removeItem("user")
-
-        }
-    }, [status, currentUser]);
+    // useEffect(() => {
+    //
+    //     if (status === "succeeded" && Object.keys(currentUser).length !== 0){
+    //
+    //         localStorage.setItem("user", JSON.stringify(currentUser))
+    //     }
+    //     else if (Object.keys(currentUser).length === 0){
+    //         localStorage.removeItem("user")
+    //
+    //     }
+    // }, [status, currentUser]);
 
 
   return (
     <div className="App">
         <BrowserRouter>
-            {/*<Navbar/>*/}
-            {/*<Header/>*/}
-            {/*<Dashboard/>*/}
+
             <Routes/>
         </BrowserRouter>
         <Toaster position="top-right" toastOptions={{
